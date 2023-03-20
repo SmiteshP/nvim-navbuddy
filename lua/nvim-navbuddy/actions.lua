@@ -1,0 +1,151 @@
+local actions = {}
+
+local function clean_up(display)
+	display.layout:unmount()
+	display:clear_highlights()
+end
+
+function actions.close(display)
+	clean_up(display)
+	vim.api.nvim_win_set_cursor(display.for_win, display.start_cursor)
+end
+
+function actions.next_sibling(display)
+	if display.focus_node.next == nil then
+		return
+	end
+
+	local next_node = display.focus_node.next
+	display.focus_node = next_node
+
+	display:redraw()
+end
+
+function actions.previous_sibling(display)
+	if display.focus_node.prev == nil then
+		return
+	end
+
+	local prev_node = display.focus_node.prev
+	display.focus_node = prev_node
+
+	display:redraw()
+end
+
+function actions.parent(display)
+	if display.focus_node.parent.is_root then
+		return
+	end
+
+	local parent_node = display.focus_node.parent
+	display.focus_node = parent_node
+
+	display:redraw()
+end
+
+function actions.children(display)
+	if display.focus_node.children == nil then
+		actions.select(display)
+		return
+	end
+
+	local child_node
+	if display.focus_node.memory then
+		child_node = display.focus_node.children[display.focus_node.memory]
+	else
+		child_node = display.focus_node.children[1]
+	end
+	display.focus_node = child_node
+
+	display:redraw()
+end
+
+function actions.select(display)
+	display:close()
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.name_range["start"].line,
+												  display.focus_node.name_range["start"].character})
+end
+
+function actions.visual(display)
+	display:close()
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["start"].line, display.focus_node.scope["start"].character})
+	vim.api.nvim_command("normal v")
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["end"].line, display.focus_node.scope["end"].character-1})
+end
+
+function actions.append_name(display)
+	display:close()
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.name_range["end"].line, display.focus_node.name_range["end"].character-1})
+	vim.api.nvim_feedkeys("a", 'n', false)
+end
+
+function actions.append_scope(display)
+	display:close()
+	if string.len(vim.api.nvim_buf_get_lines(display.for_buf, display.focus_node.scope["end"].line-1, display.focus_node.scope["end"].line, false)[1]) == display.focus_node.scope["end"].character then
+		vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["end"].line, display.focus_node.scope["end"].character})
+	else
+		vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["end"].line, display.focus_node.scope["end"].character-1})
+	end
+	vim.api.nvim_feedkeys("a", 'n', false)
+end
+
+function actions.rename(display)
+	display:close()
+	vim.lsp.buf.rename()
+end
+
+function actions.delete(display)
+	actions.visual(display)
+	vim.api.nvim_command("normal d")
+end
+
+function actions.fold_create(display)
+	if vim.o.foldmethod ~= "manual" then
+		vim.notify("Fold create action works only when foldmethod is 'manual'", vim.log.levels.ERROR)
+		return
+	end
+
+	display.navbuddy_leaving_window_for_action = true
+	vim.api.nvim_set_current_win(display.for_win)
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["start"].line, display.focus_node.scope["start"].character})
+	vim.api.nvim_command("normal v")
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["end"].line, display.focus_node.scope["end"].character-1})
+	vim.api.nvim_command("normal zf")
+	vim.api.nvim_set_current_win(display.mid.winid)
+	display.navbuddy_leaving_window_for_action = false
+end
+
+function actions.fold_delete(display)
+	if vim.o.foldmethod ~= "manual" then
+		vim.notify("Fold delete action works only when foldmethod is 'manual'", vim.log.levels.ERROR)
+		return
+	end
+
+	display.navbuddy_leaving_window_for_action = true
+	vim.api.nvim_set_current_win(display.for_win)
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["start"].line, display.focus_node.scope["start"].character})
+	vim.api.nvim_command("normal v")
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["end"].line, display.focus_node.scope["end"].character-1})
+	pcall(vim.api.nvim_command, "normal zd")
+	vim.api.nvim_set_current_win(display.mid.winid)
+	display.navbuddy_leaving_window_for_action = false
+end
+
+function actions.comment(display)
+	local status_ok, comment = pcall(require, "Comment.api")
+	if not status_ok then
+		vim.notify("Comment.nvim not found", vim.log.levels.ERROR)
+		return
+	end
+
+	display.navbuddy_leaving_window_for_action = true
+	vim.api.nvim_set_current_win(display.for_win)
+	vim.api.nvim_buf_set_mark(display.for_buf, '<', display.focus_node.scope["start"].line, display.focus_node.scope["start"].character, {})
+	vim.api.nvim_buf_set_mark(display.for_buf, '>', display.focus_node.scope["end"].line, display.focus_node.scope["end"].character, {})
+	comment.locked("toggle.linewise")('v')
+	vim.api.nvim_set_current_win(display.mid.winid)
+	display.navbuddy_leaving_window_for_action = false
+end
+
+return actions
+
