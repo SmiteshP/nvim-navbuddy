@@ -221,7 +221,7 @@ end
 function display:focus_range()
 	local ranges = nil
 
-	if self.focus_node.scope == self.focus_node.name_range then
+	if vim.deep_equal(self.focus_node.scope, self.focus_node.name_range) then
 		ranges = {{"NavbuddyScope", self.focus_node.scope}}
 	else
 		ranges = {{"NavbuddyScope", self.focus_node.scope}, {"NavbuddyName", self.focus_node.name_range}}
