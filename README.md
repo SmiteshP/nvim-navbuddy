@@ -77,7 +77,7 @@ navbuddy.setup {
         position = "50%",
         sections = {
             left = {
-                size = "20%"
+                size = "20%",
                 border = nil -- You can set border style for each section individually as well.
             },
             mid = {
