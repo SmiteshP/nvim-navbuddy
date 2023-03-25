@@ -73,6 +73,18 @@ function actions.visual(display)
 	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["end"].line, display.focus_node.scope["end"].character-1})
 end
 
+function actions.insert_name(display)
+	display:close()
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.name_range["start"].line, display.focus_node.name_range["start"].character})
+	vim.api.nvim_feedkeys("i", 'n', false)
+end
+
+function actions.insert_scope(display)
+	display:close()
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["start"].line, display.focus_node.scope["start"].character})
+	vim.api.nvim_feedkeys("i", 'n', false)
+end
+
 function actions.append_name(display)
 	display:close()
 	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.name_range["end"].line, display.focus_node.name_range["end"].character-1})

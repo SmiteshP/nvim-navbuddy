@@ -62,6 +62,9 @@ local config = {
 
 		["v"] = actions.visual,
 
+		["i"] = actions.insert_name,
+		["I"] = actions.insert_scope,
+
 		["a"] = actions.append_name,
 		["A"] = actions.append_scope,
 
