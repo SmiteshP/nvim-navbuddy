@@ -100,6 +100,109 @@ local function fill_buffer(buf, node, config)
 	vim.api.nvim_win_set_cursor(buf.winid, cursor_pos)
 end
 
+local function get_border_chars(style, section)
+	if style == "none" or style == "shadow" then
+		return style
+	end
+
+	local border_chars = {
+		top_left = {
+			single  = "┌",
+			rounded = "╭",
+			double  = "╔",
+			solid   = "▛",
+		},
+		top = {
+			single  = "─",
+			rounded = "─",
+			double  = "═",
+			solid   = "▀",
+		},
+		top_right = {
+			single  = "┐",
+			rounded = "╮",
+			double  = "╗",
+			solid   = "▜",
+		},
+		right = {
+			single  = "│",
+			rounded = "│",
+			double  = "║",
+			solid   = "▐",
+		},
+		bottom_right = {
+			single  = "┘",
+			rounded = "╯",
+			double  = "╝",
+			solid   = "▟",
+		},
+		bottom = {
+			single  = "─",
+			rounded = "─",
+			double  = "═",
+			solid   = "▄",
+		},
+		bottom_left = {
+			single  = "└",
+			rounded = "╰",
+			double  = "╚",
+			solid   = "▙",
+		},
+		left = {
+			single  = "│",
+			rounded = "│",
+			double  = "║",
+			solid   = "▌",
+		},
+		top_T = {
+			single  = "┬",
+			rounded = "┬",
+			double  = "╦",
+			solid   = "▛",
+		},
+		bottom_T = {
+			single  = "┴",
+			rounded = "┴",
+			double  = "╩",
+			solid   = "▙",
+		},
+		blank = " ",
+	}
+
+	local border_chars_map = {
+		left = { style = {
+			border_chars.top_left[style],
+			border_chars.top[style],
+			border_chars.top[style],
+			border_chars.blank,
+			border_chars.bottom[style],
+			border_chars.bottom[style],
+			border_chars.bottom_left[style],
+			border_chars.left[style],
+		}},
+		mid = { style = {
+			border_chars.top_T[style],
+			border_chars.top[style],
+			border_chars.top[style],
+			border_chars.blank,
+			border_chars.bottom[style],
+			border_chars.bottom[style],
+			border_chars.bottom_T[style],
+			border_chars.left[style],
+		}},
+		right = {
+			border_chars.top_T[style],
+			border_chars.top[style],
+			border_chars.top_right[style],
+			border_chars.right[style],
+			border_chars.bottom_right[style],
+			border_chars.bottom[style],
+			border_chars.bottom_T[style],
+			border_chars.left[style],
+		},
+	}
+	return border_chars_map[section]
+end
 
 local display = {}
 
@@ -115,7 +218,7 @@ function display:new(obj)
 	-- NUI elements
 	local left_popup = nui_popup({
 		focusable = false,
-		border = config.window.sections.left.border or config.window.border,
+		border = config.window.sections.left.border or get_border_chars(config.window.border, "left"),
 		buf_options = {
 			modifiable = false,
 		},
@@ -123,7 +226,7 @@ function display:new(obj)
 
 	local mid_popup = nui_popup({
 		enter = true,
-		border = config.window.sections.mid.border or config.window.border,
+		border = config.window.sections.mid.border or get_border_chars(config.window.border, "mid"),
 		buf_options = {
 			modifiable = false,
 		},
@@ -134,14 +237,16 @@ function display:new(obj)
 		bottom_align = "right"
 	}
 
-	if config.window.sections.right.border == "none" or config.window.border == "none" then
+	if config.window.sections.right.border == "none" or config.window.border == "none"
+		or config.window.sections.right.border == "shadow" or config.window.border == "shadow"
+		or config.window.sections.right.border == "solid" or config.window.border == "solid" then
 		lsp_name = nil
 	end
 
 	local right_popup = nui_popup({
 		focusable = false,
 		border = {
-			style = config.window.sections.right.border or config.window.border,
+			style = config.window.sections.right.border or get_border_chars(config.window.border, "right"),
 			text = lsp_name
 		},
 		win_options = {

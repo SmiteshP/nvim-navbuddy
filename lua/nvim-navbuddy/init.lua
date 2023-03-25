@@ -91,6 +91,8 @@ setmetatable(config.icons, {
 
 local navbuddy_attached_clients = {}
 
+-- @Private Methods
+
 local function choose_lsp_menu(for_buf, make_request)
 	local style = nil
 
@@ -215,6 +217,8 @@ local function handler(bufnr, curr_node, lsp_name)
 	})
 end
 
+-- @Public Methods
+
 local M = {}
 
 function M.attach(client, bufnr)
@@ -256,6 +260,16 @@ function M.setup(user_config)
 	if user_config ~= nil then
 		if user_config.window ~= nil then
 			config.window = vim.tbl_deep_extend("keep", user_config.window, config.window)
+		end
+
+		-- If one is set, default for others should be none
+		if config.window.sections.left.border ~= nil or
+			config.window.sections.mid.border ~= nil or
+			config.window.sections.right.border ~= nil then
+
+			config.window.sections.left.border  = config.window.sections.left.border or "none"
+			config.window.sections.mid.border   = config.window.sections.mid.border or "none"
+			config.window.sections.right.border = config.window.sections.right.border or "none"
 		end
 
 		if user_config.icons ~= nil then
