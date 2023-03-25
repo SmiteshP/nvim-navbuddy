@@ -79,6 +79,7 @@ local config = {
 	},
 	lsp = {
 		auto_attach = false,
+		preference = nil
 	}
 }
 
@@ -158,10 +159,30 @@ local function request(for_buf, handler)
 
 	if #navbuddy_attached_clients[for_buf] == 1 then
 		make_request(navbuddy_attached_clients[for_buf][1])
+	elseif config.lsp.preference ~= nil then
+		local found = false
+
+		for _, preferred_lsp in ipairs(config.lsp.preference) do
+			for _, attached_lsp in ipairs(navbuddy_attached_clients[for_buf]) do
+				if preferred_lsp == attached_lsp.name then
+					navbuddy_attached_clients[for_buf] = { attached_lsp }
+					found = true;
+					make_request(attached_lsp)
+					break;
+				end
+			end
+
+			if found then
+				break;
+			end
+		end
+
+		if not found then
+			choose_lsp_menu(for_buf, make_request)
+		end
 	else
 		choose_lsp_menu(for_buf, make_request)
 	end
-
 end
 
 local function handler(bufnr, curr_node, lsp_name)
