@@ -71,11 +71,14 @@ Use `setup` to override any of the default options
 navbuddy.setup {
     window = {
         border = "single",  -- "rounded", "double", "solid", "none"
+	                    -- or an array with eight chars building up the border in a clockwise fashion
+                            -- starting with the top-left corner. eg: { "╔", "═" ,"╗", "║", "╝", "═", "╚", "║" }.
         size = "60%",
         position = "50%",
         sections = {
             left = {
                 size = "20%"
+                border = nil -- You can set border style for each section individually as well.
             },
             mid = {
                 size = "40%"
