@@ -1,0 +1,262 @@
+*nvim-navbuddy* *navbuddy*
+
+A simple popup display that provides breadcrumbs like navigation feature but
+in keyboard centric manner inspired by ranger file manager.
+
+Requires :
+*nvim-lspconfig* `https://github.com/neovim/nvim-lspconfig`
+*nvim-navic* `https://github.com/SmiteshP/nvim-navic`
+*nui.nvim* `https://github.com/MunifTanjim/nui.nvim`
+*Neovim* 0.8 or above
+
+=============================================================================
+CONTENTS                                                     *navbuddy-components*
+
+API                                                                 |navbuddy-api|
+Usage                                                             |navbuddy-usage|
+Customisation                                                 |navbuddy-customise|
+Actions                                                         |navbuddy-actions|
+Highlights                                                   |navbuddy-highlights|
+
+=============================================================================
+API                                                                 *navbuddy-api*
+
+|nvim-navbuddy| provides the following functions for the user.
+
+*navbuddy.setup* (opts)
+	Configure |nvim-navbuddy|'s options. See more *navbuddy-cusomise*.
+
+*navbuddy.attach* (client, bufnr)
+	Used to attach |nvim-navbuddy| to lsp server. Pass this function as
+	on_attach while setting up your desired lsp server. Manual attachment can
+	be skiped if you have enabled auto_attach option.
+
+*navbuddy.open* (bufnr)
+	Opens the Navbuddy window.
+
+=============================================================================
+Usage                                                             *navbuddy-usage*
+
+|nvim-navbuddy| needs to be attached to lsp servers of the buffer to work. Use the
+|navbuddy.attach| function while setting up lsp servers. You can skip this
+step if you have enabled auto_attach option during setup.
+
+Example: >
+	require("lspconfig").clangd.setup {
+		on_attach = function(client, bufnr)
+			navbuddy.attach(client, bufnr)
+		end
+	}
+<
+Then simply use command "Navbuddy" to open the window.
+
+=============================================================================
+Customisation                                                 *navbuddy-customise*
+
+Use |navbuddy.setup| to override any of the default options
+
+	icons: table
+		Icons to show for captured symbols. Default icons assume that you
+		have nerd-font.
+
+	window: table
+		Set options related to window's "border", "size", "position".
+
+	mappings: table
+		Actions to be triggered for specified keybindings.
+
+	lsp: table
+		auto_attach: boolean
+			Enable to have Navbuddy automatically attach to every LSP for
+			current buffer. Its disabled by default.
+		preference: table
+			Table ranking lsp_servers. Lower the index, higher the priority of
+			the server. If there are more than one server attached to a
+			buffer, navbuddy will refer to this list to make a decision on
+			which one to use.
+			example: Incase a buffer is attached to clangd and ccls both and
+			the preference list is { "clangd", "pyright" }. Then clangd will
+			be prefered.
+
+Defaults >
+
+	navbuddy.setup config = {
+		window = {
+			border = "single",  -- "rounded", "double", "solid", "none"
+			size = "60%",
+			position = "50%",
+			sections = {
+				left = {
+					size = "20%"
+				},
+				mid = {
+					size = "40%"
+				},
+				right = {
+					size = "40%" -- These should ideally add up to 100%
+				}
+			}
+		},
+		icons = {
+			[1] = " ", -- File
+			[2] = " ", -- Module
+			[3] = " ", -- Namespace
+			[4] = " ", -- Package
+			[5] = " ", -- Class
+			[6] = " ", -- Method
+			[7] = " ", -- Property
+			[8] = " ", -- Field
+			[9] = " ", -- Constructor
+			[10] = "練", -- Enum
+			[11] = "練", -- Interface
+			[12] = " ", -- Function
+			[13] = " ", -- Variable
+			[14] = " ", -- Constant
+			[15] = " ", -- String
+			[16] = " ", -- Number
+			[17] = "◩ ", -- Boolean
+			[18] = " ", -- Array
+			[19] = " ", -- Object
+			[20] = " ", -- Key
+			[21] = "ﳠ ", -- Null
+			[22] = " ", -- EnumMember
+			[23] = " ", -- Struct
+			[24] = " ", -- Event
+			[25] = " ", -- Operator
+			[26] = " ", -- TypeParameter
+			[255] = " ", -- Macro
+		},
+		mappings = {
+			["<esc>"] = actions.close,
+			["q"] = actions.close,
+
+			["j"] = actions.next_sibling,
+			["k"] = actions.previous_sibling,
+
+			["h"] = actions.parent,
+			["l"] = actions.children,
+
+			["v"] = actions.visual,
+
+			["i"] = actions.insert_name,
+			["I"] = actions.insert_scope,
+
+			["a"] = actions.append_name,
+			["A"] = actions.append_scope,
+
+			["r"] = actions.rename,
+
+			["d"] = actions.delete,
+
+			["f"] = actions.fold_create,
+			["F"] = actions.fold_delete,
+
+			["c"] = actions.comment,
+
+			["<enter>"] = actions.select,
+			["o"] = actions.select,
+		},
+		lsp = {
+			auto_attach = false,
+			preference = nil
+		}
+	}
+<
+=============================================================================
+Actions                                                         *navbuddy-actions*
+
+|nvim-navbuddy| provides the following actions for the user.
+
+*actions.close* (opts)
+	Close the Navbuddy window and return cursor to original location.
+
+*actions.next_sibling* (opts)
+	Move to next_sibling, below current node, in Navbuddy window.
+
+*actions.previous_sibling* (opts)
+	Move to previous_sibling, above current node, in Navbuddy window.
+
+*actions.parent* (opts)
+	Move to parent of current, left of current node, in Navbuddy window.
+
+*actions.children* (opts)
+	Move to children of current, right of current node, in Navbuddy window.
+
+*actions.select* (opts)
+	Goto currently focus node.
+
+*actions.visual* (opts)
+	Visual select the scope of current node.
+
+*actions.insert_name* (opts)
+	Start insert at begin of name.
+
+*actions.insert_scope* (opts)
+	Start insert at begin of scope.
+
+*actions.append_name* (opts)
+	Start insert at end of name.
+
+*actions.append_scope* (opts)
+	Start insert at end of scope.
+
+*actions.rename* (opts)
+	Trigger lsp rename for current node.
+
+*actions.delete* (opts)
+	Delete currently focused scope.
+
+*actions.fold_create* (opts)
+	Create fold for current scope. Requires fold methos to be "manual".
+
+*actions.fold_delete* (opts)
+	Delete fold for current scope. Requires fold methos to be "manual".
+
+*actions.comment* (opts)
+	Comment selected scope. Require Comment.nvim plugin to be installed.
+
+=============================================================================
+Highlight                                                    *navbuddy-highlights*
+
+|nvim-navbuddy| provides the following highlights which get used when
+available.
+
+	`NavbuddyName`  - highlight for name in source buffer
+	`NavbuddyScope` - highlight for scope of context in source buffer
+	`NavbuddyFloatBorder` - Floatborder highlight
+
+The following highlights are are used to highlight elements in the navbuddy
+window according to their type. If you have "NavicIcons<type>" highlights
+already defined, these will automatically get linked to them unless defined
+explicitly.
+
+	`NavbuddyFile`
+	`NavbuddyModule`
+	`NavbuddyNamespace`
+	`NavbuddyPackage`
+	`NavbuddyClass`
+	`NavbuddyMethod`
+	`NavbuddyProperty`
+	`NavbuddyField`
+	`NavbuddyConstructor`
+	`NavbuddyEnum`
+	`NavbuddyInterface`
+	`NavbuddyFunction`
+	`NavbuddyVariable`
+	`NavbuddyConstant`
+	`NavbuddyString`
+	`NavbuddyNumber`
+	`NavbuddyBoolean`
+	`NavbuddyArray`
+	`NavbuddyObject`
+	`NavbuddyKey`
+	`NavbuddyNull`
+	`NavbuddyEnumMember`
+	`NavbuddyStruct`
+	`NavbuddyEvent`
+	`NavbuddyOperator`
+	`NavbuddyTypeParameter`
+
+
+=============================================================================
+vim:tw=78:ts=4:ft=help:norl:
