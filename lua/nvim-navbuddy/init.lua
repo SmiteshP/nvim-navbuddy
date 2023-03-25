@@ -221,6 +221,11 @@ end
 
 local M = {}
 
+function M.open(bufnr)
+	bufnr = bufnr or vim.api.nvim_get_current_buf()
+	request(bufnr, handler)
+end
+
 function M.attach(client, bufnr)
 	if not client.server_capabilities.documentSymbolProvider then
 		if not vim.g.navbuddy_silence then
@@ -251,9 +256,7 @@ function M.attach(client, bufnr)
 		buffer = bufnr,
 	})
 
-	vim.api.nvim_buf_create_user_command(bufnr, "Navbuddy", function()
-		request(bufnr, handler)
-	end, {})
+	vim.api.nvim_buf_create_user_command(bufnr, "Navbuddy", function() M.open(bufnr) end, {})
 end
 
 function M.setup(user_config)
