@@ -76,6 +76,9 @@ local config = {
 
 		["<enter>"] = actions.select,
 		["o"] = actions.select,
+	},
+	lsp = {
+		auto_attach = false,
 	}
 }
 
@@ -229,20 +232,36 @@ function M.attach(client, bufnr)
 end
 
 function M.setup(user_config)
-	if not user_config then
-		return
-	end
+	if user_config ~= nil then
+		if user_config.window ~= nil then
+			config.window = vim.tbl_deep_extend("keep", user_config.window, config.window)
+		end
 
-	if user_config.window ~= nil then
-		M.config.window = vim.tbl_deep_extend("keep", user_config.window, M.config.window)
-	end
-
-	if user_config.icons ~= nil then
-		for k, v in pairs(user_config.icons) do
-			if navic.adapt_lsp_str_to_num(k) then
-				M.config.icons[navic.adapt_lsp_str_to_num(k)] = v
+		if user_config.icons ~= nil then
+			for k, v in pairs(user_config.icons) do
+				if navic.adapt_lsp_str_to_num(k) then
+					config.icons[navic.adapt_lsp_str_to_num(k)] = v
+				end
 			end
 		end
+
+		if user_config.lsp ~= nil then
+			config.lsp = vim.tbl_deep_extend("keep", user_config.lsp, config.lsp)
+		end
+	end
+
+	if config.lsp.auto_attach == true then
+		local navbuddy_augroup = vim.api.nvim_create_augroup("navbuddy", { clear = false })
+		vim.api.nvim_clear_autocmds({
+			group = navbuddy_augroup,
+		})
+		vim.api.nvim_create_autocmd("LspAttach", {
+			callback = function(args)
+				local bufnr = args.buf
+				local client = vim.lsp.get_client_by_id(args.data.client_id)
+				M.attach(client, bufnr)
+			end,
+		})
 	end
 end
 
