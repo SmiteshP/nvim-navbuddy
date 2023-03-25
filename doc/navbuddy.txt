@@ -80,7 +80,7 @@ Use |navbuddy.setup| to override any of the default options
 
 Defaults >
 
-	navbuddy.setup config = {
+	navbuddy.setup {
 		window = {
 			border = "single",  -- "rounded", "double", "solid", "none"
 			size = "60%",
