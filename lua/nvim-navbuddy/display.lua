@@ -102,7 +102,8 @@ local function fill_buffer(buf, node, config)
 end
 
 local function get_border_chars(style, section)
-	if style == "none" or style == "shadow" then
+	if style ~= "single" and style ~= "rounded" and
+		style ~= "double" and style ~= "solid" then
 		return style
 	end
 
