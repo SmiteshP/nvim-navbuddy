@@ -60,7 +60,11 @@ local config = {
 		["h"] = actions.parent,
 		["l"] = actions.children,
 
-		["v"] = actions.visual,
+		["v"] = actions.visual_name,
+		["V"] = actions.visual_scope,
+
+		["y"] = actions.yank_name,
+		["Y"] = actions.yank_scope,
 
 		["i"] = actions.insert_name,
 		["I"] = actions.insert_scope,

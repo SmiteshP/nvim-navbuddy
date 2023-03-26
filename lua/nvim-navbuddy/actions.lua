@@ -66,7 +66,30 @@ function actions.select(display)
 												  display.focus_node.name_range["start"].character})
 end
 
-function actions.visual(display)
+function actions.yank_name(display)
+	display:close()
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.name_range["start"].line, display.focus_node.name_range["start"].character})
+	vim.api.nvim_command("normal v")
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.name_range["end"].line, display.focus_node.name_range["end"].character-1})
+	vim.api.nvim_command("normal \"+y")
+end
+
+function actions.yank_scope(display)
+	display:close()
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["start"].line, display.focus_node.scope["start"].character})
+	vim.api.nvim_command("normal v")
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["end"].line, display.focus_node.scope["end"].character-1})
+	vim.api.nvim_command("normal \"+y")
+end
+
+function actions.visual_name(display)
+	display:close()
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.name_range["start"].line, display.focus_node.name_range["start"].character})
+	vim.api.nvim_command("normal v")
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.name_range["end"].line, display.focus_node.name_range["end"].character-1})
+end
+
+function actions.visual_scope(display)
 	display:close()
 	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["start"].line, display.focus_node.scope["start"].character})
 	vim.api.nvim_command("normal v")

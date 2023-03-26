@@ -142,7 +142,11 @@ Defaults >
 			["h"] = actions.parent,
 			["l"] = actions.children,
 
-			["v"] = actions.visual,
+			["v"] = actions.visual_name,
+			["V"] = actions.visual_scope,
+
+			["y"] = actions.yank_name,
+			["Y"] = actions.yank_scope,
 
 			["i"] = actions.insert_name,
 			["I"] = actions.insert_scope,
@@ -191,8 +195,17 @@ Actions                                                         *navbuddy-action
 *actions.select* (opts)
 	Goto currently focus node.
 
-*actions.visual* (opts)
+*actions.visual_name* (opts)
+	Visual select the name of current node.
+
+*actions.visual_scope* (opts)
 	Visual select the scope of current node.
+
+*actions.yank_name* (opts)
+	Yank the name of current node.
+
+*actions.yank_scope* (opts)
+	Yank the scope of current node.
 
 *actions.insert_name* (opts)
 	Start insert at begin of name.
