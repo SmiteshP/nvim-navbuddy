@@ -3,7 +3,7 @@
 A simple popup display that provides breadcrumbs like navigation feature but
 in keyboard centric manner inspired by ranger file manager.
 
-![2023-03-26 09-48-54](https://user-images.githubusercontent.com/43147494/227755128-6421972e-b2b4-4d69-8906-81baa7a82eeb.gif)
+https://user-images.githubusercontent.com/43147494/227758807-13a614ff-a09d-4be0-8f6b-ac22f814ce6f.mp4
 
 ## ⚡️ Requirements
 
