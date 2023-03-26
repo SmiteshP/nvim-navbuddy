@@ -68,10 +68,13 @@ Use `setup` to override any of the default options
 			for example - In case a buffer is attached to clangd and ccls both and the preference list is `{ "clangd", "pyright" }`. Then clangd will be prefered.
 
 ```lua
+local navbuddy = require("nvim-navbuddy")
+local actions = require("nvim-navbuddy.actions")
+
 navbuddy.setup {
     window = {
         border = "single",  -- "rounded", "double", "solid", "none"
-	                    -- or an array with eight chars building up the border in a clockwise fashion
+                            -- or an array with eight chars building up the border in a clockwise fashion
                             -- starting with the top-left corner. eg: { "╔", "═" ,"╗", "║", "╝", "═", "╚", "║" }.
         size = "60%",
         position = "50%",
