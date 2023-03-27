@@ -62,6 +62,10 @@ end
 
 function actions.select(display)
 	display:close()
+	-- to push location to jumplist:
+	-- move display to start_cursor, set mark ', then move to new location
+	vim.api.nvim_win_set_cursor(display.for_win, display.start_cursor)
+	vim.api.nvim_command("normal! m'")
 	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.name_range["start"].line,
 												  display.focus_node.name_range["start"].character})
 end
