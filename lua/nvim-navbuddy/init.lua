@@ -17,7 +17,6 @@ local config = {
 				size = "40%"
 			},
 			right = {
-				size = "40%"
 			}
 		}
 	},

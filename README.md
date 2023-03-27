@@ -84,10 +84,13 @@ navbuddy.setup {
                 border = nil -- You can set border style for each section individually as well.
             },
             mid = {
-                size = "40%"
+                size = "40%",
+                border = nil
             },
             right = {
-                size = "40%" -- These should ideally add up to 100%
+                -- No size option for right most section. It fills to
+                -- remaining area.
+                border = nil
             }
         }
     },

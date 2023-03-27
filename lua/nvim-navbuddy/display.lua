@@ -268,7 +268,7 @@ function display:new(obj)
 		nui_layout.Box({
 			nui_layout.Box(left_popup, { size = config.window.sections.left.size }),
 			nui_layout.Box(mid_popup, { size = config.window.sections.mid.size }),
-			nui_layout.Box(right_popup, { size = config.window.sections.right.size }),
+			nui_layout.Box(right_popup, { grow = 1 }),
 		}, { dir = "row" })
 	)
 
