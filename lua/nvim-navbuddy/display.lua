@@ -221,6 +221,9 @@ function display:new(obj)
 	local left_popup = nui_popup({
 		focusable = false,
 		border = config.window.sections.left.border or get_border_chars(config.window.border, "left"),
+		win_options = {
+			winhighlight = "FloatBorder:NavbuddyFloatBorder",
+		},
 		buf_options = {
 			modifiable = false,
 		},
@@ -229,6 +232,9 @@ function display:new(obj)
 	local mid_popup = nui_popup({
 		enter = true,
 		border = config.window.sections.mid.border or get_border_chars(config.window.border, "mid"),
+		win_options = {
+			winhighlight = "FloatBorder:NavbuddyFloatBorder",
+		},
 		buf_options = {
 			modifiable = false,
 		},
