@@ -285,7 +285,9 @@ function display:new(obj)
 
 	-- Hidden cursor
 	local user_gui_cursor = vim.api.nvim_get_option("guicursor")
-	vim.api.nvim_set_option("guicursor", "a:NavbuddyCursor")
+	if user_gui_cursor ~= "" then
+		vim.api.nvim_set_option("guicursor", "a:NavbuddyCursor")
+	end
 
 	-- Autocmds
 	local augroup = vim.api.nvim_create_augroup("Navbuddy", { clear = false })
