@@ -300,6 +300,10 @@ function M.setup(user_config)
 		if user_config.lsp ~= nil then
 			config.lsp = vim.tbl_deep_extend("keep", user_config.lsp, config.lsp)
 		end
+
+		if user_config.source_buffer ~= nil then
+			config.source_buffer = vim.tbl_deep_extend("keep", user_config.source_buffer, config.source_buffer)
+		end
 	end
 
 	if config.lsp.auto_attach == true then
