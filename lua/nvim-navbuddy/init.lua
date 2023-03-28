@@ -86,6 +86,10 @@ local config = {
 	lsp = {
 		auto_attach = false,
 		preference = nil
+	},
+	source_buffer = {
+		follow_node = true,
+		highlight = true
 	}
 }
 

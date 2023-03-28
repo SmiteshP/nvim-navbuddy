@@ -345,20 +345,25 @@ function display:focus_range()
 		ranges = {{"NavbuddyScope", self.focus_node.scope}, {"NavbuddyName", self.focus_node.name_range}}
 	end
 
-	for _, v in ipairs(ranges) do
-		local highlight, range = unpack(v)
+	if self.config.source_buffer.highlight then
+		for _, v in ipairs(ranges) do
+			local highlight, range = unpack(v)
 
-		if range["start"].line == range["end"].line then
-			vim.api.nvim_buf_add_highlight(self.for_buf, ns, highlight, range["start"].line-1, range["start"].character, range["end"].character)
-		else
-			vim.api.nvim_buf_add_highlight(self.for_buf, ns, highlight, range["start"].line-1, range["start"].character, -1)
-			vim.api.nvim_buf_add_highlight(self.for_buf, ns, highlight, range["end"].line-1, 0, range["end"].character)
-			for i = range["start"].line, range["end"].line-2, 1 do
-				vim.api.nvim_buf_add_highlight(self.for_buf, ns, highlight, i, 0, -1)
+			if range["start"].line == range["end"].line then
+				vim.api.nvim_buf_add_highlight(self.for_buf, ns, highlight, range["start"].line-1, range["start"].character, range["end"].character)
+			else
+				vim.api.nvim_buf_add_highlight(self.for_buf, ns, highlight, range["start"].line-1, range["start"].character, -1)
+				vim.api.nvim_buf_add_highlight(self.for_buf, ns, highlight, range["end"].line-1, 0, range["end"].character)
+				for i = range["start"].line, range["end"].line-2, 1 do
+					vim.api.nvim_buf_add_highlight(self.for_buf, ns, highlight, i, 0, -1)
+				end
 			end
 		end
+	end
 
-		vim.api.nvim_win_set_cursor(self.for_win, {range["start"].line, range["end"].character})
+	if self.config.source_buffer.follow_node then
+		local last_range = ranges[#ranges][2]
+		vim.api.nvim_win_set_cursor(self.for_win, {last_range["start"].line, last_range["start"].character})
 	end
 end
 
