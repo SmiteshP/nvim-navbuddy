@@ -282,10 +282,15 @@ function display:new(obj)
 	obj.left = left_popup
 	obj.mid = mid_popup
 	obj.right = right_popup
+	obj.state = {
+		leaving_window_for_action = false,
+		closed = false,
+		user_gui_cursor = nil
+	}
 
 	-- Hidden cursor
-	local user_gui_cursor = vim.api.nvim_get_option("guicursor")
-	if user_gui_cursor ~= "" then
+	obj.state.user_gui_cursor = vim.api.nvim_get_option("guicursor")
+	if obj.state.user_gui_cursor ~= "" then
 		vim.api.nvim_set_option("guicursor", "a:NavbuddyCursor")
 	end
 
@@ -312,10 +317,8 @@ function display:new(obj)
 		group = augroup,
 		buffer = obj.mid.bufnr,
 		callback = function()
-			if obj.navbuddy_leaving_window_for_action ~= true then
-				vim.api.nvim_set_option("guicursor", user_gui_cursor)
-				layout:unmount()
-				obj:clear_highlights()
+			if obj.state.leaving_window_for_action == false and obj.state.closed == false then
+				obj:close()
 			end
 		end
 	})
@@ -385,6 +388,8 @@ function display:redraw()
 end
 
 function display:close()
+	self.state.closed = true
+	vim.api.nvim_set_option("guicursor", self.state.user_gui_cursor)
 	self.layout:unmount()
 	self:clear_highlights()
 end

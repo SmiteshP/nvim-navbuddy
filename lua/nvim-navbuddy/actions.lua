@@ -1,12 +1,7 @@
 local actions = {}
 
-local function clean_up(display)
-	display.layout:unmount()
-	display:clear_highlights()
-end
-
 function actions.close(display)
-	clean_up(display)
+	display:close()
 	vim.api.nvim_win_set_cursor(display.for_win, display.start_cursor)
 end
 
@@ -144,14 +139,14 @@ function actions.fold_create(display)
 		return
 	end
 
-	display.navbuddy_leaving_window_for_action = true
+	display.state.leaving_window_for_action = true
 	vim.api.nvim_set_current_win(display.for_win)
 	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["start"].line, display.focus_node.scope["start"].character})
 	vim.api.nvim_command("normal v")
 	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["end"].line, display.focus_node.scope["end"].character-1})
 	vim.api.nvim_command("normal zf")
 	vim.api.nvim_set_current_win(display.mid.winid)
-	display.navbuddy_leaving_window_for_action = false
+	display.state.leaving_window_for_action = false
 end
 
 function actions.fold_delete(display)
@@ -160,14 +155,14 @@ function actions.fold_delete(display)
 		return
 	end
 
-	display.navbuddy_leaving_window_for_action = true
+	display.state.leaving_window_for_action = true
 	vim.api.nvim_set_current_win(display.for_win)
 	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["start"].line, display.focus_node.scope["start"].character})
 	vim.api.nvim_command("normal v")
 	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.scope["end"].line, display.focus_node.scope["end"].character-1})
 	pcall(vim.api.nvim_command, "normal zd")
 	vim.api.nvim_set_current_win(display.mid.winid)
-	display.navbuddy_leaving_window_for_action = false
+	display.state.leaving_window_for_action = false
 end
 
 function actions.comment(display)
@@ -177,13 +172,13 @@ function actions.comment(display)
 		return
 	end
 
-	display.navbuddy_leaving_window_for_action = true
+	display.state.leaving_window_for_action = true
 	vim.api.nvim_set_current_win(display.for_win)
 	vim.api.nvim_buf_set_mark(display.for_buf, '<', display.focus_node.scope["start"].line, display.focus_node.scope["start"].character, {})
 	vim.api.nvim_buf_set_mark(display.for_buf, '>', display.focus_node.scope["end"].line, display.focus_node.scope["end"].character, {})
 	comment.locked("toggle.linewise")('v')
 	vim.api.nvim_set_current_win(display.mid.winid)
-	display.navbuddy_leaving_window_for_action = false
+	display.state.leaving_window_for_action = false
 end
 
 return actions
