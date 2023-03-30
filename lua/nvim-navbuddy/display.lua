@@ -2,6 +2,7 @@ local navic = require("nvim-navic.lib")
 
 local nui_popup = require("nui.popup")
 local nui_layout = require("nui.layout")
+local nui_text = require("nui.text")
 
 local ns = vim.api.nvim_create_namespace("nvim-navbuddy")
 
@@ -241,7 +242,7 @@ function display:new(obj)
 	})
 
 	local lsp_name = {
-		bottom = "["..obj.lsp_name.."]",
+		bottom = nui_text("["..obj.lsp_name.."]", "NavbuddyFloatBorder"),
 		bottom_align = "right"
 	}
 
@@ -258,7 +259,7 @@ function display:new(obj)
 			text = lsp_name
 		},
 		win_options = {
-			winhighlight = "Normal:NavbuddyFloatBorder,FloatBorder:NavbuddyFloatBorder",
+			winhighlight = "FloatBorder:NavbuddyFloatBorder",
 		},
 		buf_options = {
 			modifiable = false,
