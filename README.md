@@ -66,6 +66,9 @@ Use `setup` to override any of the default options
 	* `auto_attach` : Enable to have Navbuddy automatically attach to every LSP for current buffer. Its disabled by default.
 	* `preference` : Table ranking lsp_servers. Lower the index, higher the priority of the server. If there are more than one server attached to a buffer, navbuddy will refer to this list to make a decision on which one to use.
 			for example - In case a buffer is attached to clangd and ccls both and the preference list is `{ "clangd", "pyright" }`. Then clangd will be prefered.
+* `source_buffer` :
+	* `follow_node` : Keep the current node in focus on the source buffer
+	* `highlight` : Highlight the currently focused node
 
 ```lua
 local navbuddy = require("nvim-navbuddy")
