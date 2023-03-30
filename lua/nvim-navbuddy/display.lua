@@ -290,6 +290,9 @@ function display:new(obj)
 		user_gui_cursor = nil
 	}
 
+	-- Set filetype
+	vim.api.nvim_buf_set_option(obj.mid.bufnr, "filetype", "Navbuddy")
+
 	-- Hidden cursor
 	obj.state.user_gui_cursor = vim.api.nvim_get_option("guicursor")
 	if obj.state.user_gui_cursor ~= "" then
