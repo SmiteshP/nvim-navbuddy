@@ -24,7 +24,7 @@ API                                                                 *navbuddy-ap
 |nvim-navbuddy| provides the following functions for the user.
 
 *navbuddy.setup* (opts)
-	Configure |nvim-navbuddy|'s options. See more *navbuddy-cusomise*.
+	Configure |nvim-navbuddy|'s options. See more *navbuddy-customise*.
 
 *navbuddy.attach* (client, bufnr)
 	Used to attach |nvim-navbuddy| to lsp server. Pass this function as
