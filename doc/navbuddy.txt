@@ -83,6 +83,9 @@ Use |navbuddy.setup| to override any of the default options
 			Move the source buffer such that focused node is visible.
 		highlight: boolean
 			Highlight focused node on source buffer
+		reorient: string
+			Reorient buffer after changing nodes. options are "smart", "top",
+			"mid" or "none"
 
 Defaults >
 
@@ -182,6 +185,7 @@ Defaults >
 		source_buffer = {
 			follow_node = true,   -- Keep the current node in focus on the source buffer
 			highlight = true      -- Highlight the currently focused node
+			reorient = "smart"    -- "smart", "top", "mid" or "none"
 		}
 	}
 <

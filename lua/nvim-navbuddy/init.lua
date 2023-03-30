@@ -89,7 +89,8 @@ local config = {
 	},
 	source_buffer = {
 		follow_node = true,
-		highlight = true
+		highlight = true,
+		reorient = "smart"
 	}
 }
 

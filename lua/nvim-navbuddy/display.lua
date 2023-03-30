@@ -285,6 +285,7 @@ function display:new(obj)
 	obj.right = right_popup
 	obj.state = {
 		leaving_window_for_action = false,
+		leaving_window_for_reorientation = false,
 		closed = false,
 		user_gui_cursor = nil
 	}
@@ -318,7 +319,9 @@ function display:new(obj)
 		group = augroup,
 		buffer = obj.mid.bufnr,
 		callback = function()
-			if obj.state.leaving_window_for_action == false and obj.state.closed == false then
+			if obj.state.leaving_window_for_action == false and
+				obj.state.leaving_window_for_reorientation == false and
+				obj.state.closed == false then
 				obj:close()
 			end
 		end
@@ -365,6 +368,29 @@ function display:focus_range()
 	if self.config.source_buffer.follow_node then
 		local last_range = ranges[#ranges][2]
 		vim.api.nvim_win_set_cursor(self.for_win, {last_range["start"].line, last_range["start"].character})
+
+		self.state.leaving_window_for_reorientation = true
+		vim.api.nvim_set_current_win(self.for_win)
+
+		if self.config.source_buffer.reorient == "smart" then
+			local total_lines = self.focus_node.scope["end"].line - self.focus_node.scope["start"].line + 1
+
+			if total_lines >= vim.api.nvim_win_get_height(self.for_win) then
+				vim.api.nvim_command("normal! zt")
+			else
+				local mid_line = bit.rshift(self.focus_node.scope["start"].line + self.focus_node.scope["end"].line, 1)
+				vim.api.nvim_win_set_cursor(self.for_win, {mid_line, 0})
+				vim.api.nvim_command("normal! zz")
+				vim.api.nvim_win_set_cursor(self.for_win, {self.focus_node.name_range["start"].line, self.focus_node.name_range["start"].character})
+			end
+		elseif self.config.source_buffer.reorient == "mid" then
+			vim.api.nvim_command("normal! zz")
+		elseif self.config.source_buffer.reorient == "top" then
+			vim.api.nvim_command("normal! zt")
+		end
+
+		vim.api.nvim_set_current_win(self.mid.winid)
+		self.state.leaving_window_for_reorientation = false
 	end
 end
 

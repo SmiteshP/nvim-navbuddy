@@ -69,6 +69,7 @@ Use `setup` to override any of the default options
 * `source_buffer` :
 	* `follow_node` : Keep the current node in focus on the source buffer
 	* `highlight` : Highlight the currently focused node
+	* reorient: Reorient buffer after changing nodes. options are "smart", "top", "mid" or "none"
 
 ```lua
 local navbuddy = require("nvim-navbuddy")
@@ -166,6 +167,7 @@ navbuddy.setup {
     source_buffer = {
         follow_node = true,   -- Keep the current node in focus on the source buffer
         highlight = true      -- Highlight the currently focused node
+        reorient = "smart"    -- "smart", "top", "mid" or "none"
     }
 }
 ```

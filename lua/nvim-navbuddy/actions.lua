@@ -61,8 +61,24 @@ function actions.select(display)
 	-- move display to start_cursor, set mark ', then move to new location
 	vim.api.nvim_win_set_cursor(display.for_win, display.start_cursor)
 	vim.api.nvim_command("normal! m'")
-	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.name_range["start"].line,
-												  display.focus_node.name_range["start"].character})
+	vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.name_range["start"].line, display.focus_node.name_range["start"].character})
+
+	if display.config.source_buffer.reorient == "smart" then
+		local total_lines = display.focus_node.scope["end"].line - display.focus_node.scope["start"].line + 1
+
+		if total_lines >= vim.api.nvim_win_get_height(display.for_win) then
+			vim.api.nvim_command("normal! zt")
+		else
+			local mid_line = bit.rshift(display.focus_node.scope["start"].line + display.focus_node.scope["end"].line, 1)
+			vim.api.nvim_win_set_cursor(display.for_win, {mid_line, 0})
+			vim.api.nvim_command("normal! zz")
+			vim.api.nvim_win_set_cursor(display.for_win, {display.focus_node.name_range["start"].line, display.focus_node.name_range["start"].character})
+		end
+	elseif display.config.source_buffer.reorient == "mid" then
+		vim.api.nvim_command("normal! zz")
+	elseif display.config.source_buffer.reorient == "top" then
+		vim.api.nvim_command("normal! zt")
+	end
 end
 
 function actions.yank_name(display)
