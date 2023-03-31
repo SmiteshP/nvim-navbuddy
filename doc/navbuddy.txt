@@ -63,7 +63,8 @@ Use |navbuddy.setup| to override any of the default options
 		Set options related to window's "border", "size", "position".
 
 	mappings: table
-		Actions to be triggered for specified keybindings.
+		Actions to be triggered for specified keybindings. If you wish to set
+		custom keybindings, you will have to set all the keybindings
 
 	lsp: table
 		auto_attach: boolean

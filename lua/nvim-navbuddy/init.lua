@@ -295,7 +295,7 @@ function M.setup(user_config)
 		end
 
 		if user_config.mappings ~= nil then
-			config.mappings = vim.tbl_deep_extend("keep", user_config.mappings, config.mappings)
+			config.mappings = user_config.mappings
 		end
 
 		if user_config.lsp ~= nil then
