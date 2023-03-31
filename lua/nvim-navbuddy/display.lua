@@ -7,27 +7,30 @@ local nui_text = require("nui.text")
 local ns = vim.api.nvim_create_namespace("nvim-navbuddy")
 
 local function highlight_setup()
-	for lsp_num = 1,26 do
-		local navbuddy_ok, _ = pcall(vim.api.nvim_get_hl_by_name, "Navbuddy"..navic.adapt_lsp_num_to_str(lsp_num), false)
-		local navic_ok, navic_hl = pcall(vim.api.nvim_get_hl_by_name, "NavicIcons"..navic.adapt_lsp_num_to_str(lsp_num), true)
+	for lsp_num = 1, 26 do
+		local navbuddy_ok, _ =
+			pcall(vim.api.nvim_get_hl_by_name, "Navbuddy" .. navic.adapt_lsp_num_to_str(lsp_num), false)
+		local navic_ok, navic_hl =
+			pcall(vim.api.nvim_get_hl_by_name, "NavicIcons" .. navic.adapt_lsp_num_to_str(lsp_num), true)
 
 		if not navbuddy_ok and navic_ok then
 			navic_hl = navic_hl["foreground"]
 
-			vim.api.nvim_set_hl(0, "Navbuddy"..navic.adapt_lsp_num_to_str(lsp_num), {
+			vim.api.nvim_set_hl(0, "Navbuddy" .. navic.adapt_lsp_num_to_str(lsp_num), {
 				fg = navic_hl,
 			})
 		end
 
-		local ok, navbuddy_hl = pcall(vim.api.nvim_get_hl_by_name, "Navbuddy"..navic.adapt_lsp_num_to_str(lsp_num), true)
+		local ok, navbuddy_hl =
+			pcall(vim.api.nvim_get_hl_by_name, "Navbuddy" .. navic.adapt_lsp_num_to_str(lsp_num), true)
 		if ok then
 			navbuddy_hl = navbuddy_hl["foreground"]
-			vim.api.nvim_set_hl(0, "NavbuddyCursorLine"..navic.adapt_lsp_num_to_str(lsp_num), { bg = navbuddy_hl })
+			vim.api.nvim_set_hl(0, "NavbuddyCursorLine" .. navic.adapt_lsp_num_to_str(lsp_num), { bg = navbuddy_hl })
 		else
 			local _, normal_hl = pcall(vim.api.nvim_get_hl_by_name, "Normal", true)
 			normal_hl = normal_hl["foreground"]
-			vim.api.nvim_set_hl(0, "Navbuddy"..navic.adapt_lsp_num_to_str(lsp_num), { fg = normal_hl })
-			vim.api.nvim_set_hl(0, "NavbuddyCursorLine"..navic.adapt_lsp_num_to_str(lsp_num), { bg = normal_hl })
+			vim.api.nvim_set_hl(0, "Navbuddy" .. navic.adapt_lsp_num_to_str(lsp_num), { fg = normal_hl })
+			vim.api.nvim_set_hl(0, "NavbuddyCursorLine" .. navic.adapt_lsp_num_to_str(lsp_num), { bg = normal_hl })
 		end
 	end
 
@@ -35,7 +38,7 @@ local function highlight_setup()
 	if not ok then
 		vim.api.nvim_set_hl(0, "NavbuddyCursorLine", {
 			reverse = true,
-			bold = true
+			bold = true,
 		})
 	end
 
@@ -43,7 +46,7 @@ local function highlight_setup()
 	if not ok then
 		vim.api.nvim_set_hl(0, "NavbuddyCursor", {
 			bg = "#000000",
-			blend = 100
+			blend = 100,
 		})
 	end
 
@@ -77,7 +80,7 @@ local function fill_buffer(buf, node, config)
 
 	local lines = {}
 	for _, child_node in ipairs(parent.children) do
-		local text = " "..config.icons[child_node.kind] .. child_node.name
+		local text = " " .. config.icons[child_node.kind] .. child_node.name
 		table.insert(lines, text)
 	end
 
@@ -86,28 +89,35 @@ local function fill_buffer(buf, node, config)
 	vim.api.nvim_buf_set_option(buf.bufnr, "modifiable", false)
 
 	for i, child_node in ipairs(parent.children) do
-		vim.api.nvim_buf_add_highlight(buf.bufnr, ns, "Navbuddy"..navic.adapt_lsp_num_to_str(child_node.kind), i-1, 0, -1)
+		vim.api.nvim_buf_add_highlight(
+			buf.bufnr,
+			ns,
+			"Navbuddy" .. navic.adapt_lsp_num_to_str(child_node.kind),
+			i - 1,
+			0,
+			-1
+		)
 	end
 
 	if cursor_pos[1] ~= node.index then
 		cursor_pos[1] = node.index
 	end
 
-	vim.api.nvim_buf_add_highlight(buf.bufnr, ns, "NavbuddyCursorLine", cursor_pos[1]-1, 0, -1)
-	vim.api.nvim_buf_set_extmark(buf.bufnr, ns, cursor_pos[1]-1, #lines[cursor_pos[1]], {
+	vim.api.nvim_buf_add_highlight(buf.bufnr, ns, "NavbuddyCursorLine", cursor_pos[1] - 1, 0, -1)
+	vim.api.nvim_buf_set_extmark(buf.bufnr, ns, cursor_pos[1] - 1, #lines[cursor_pos[1]], {
 		end_row = cursor_pos[1],
 		hl_eol = true,
-		hl_group = "NavbuddyCursorLine"..navic.adapt_lsp_num_to_str(node.kind)
+		hl_group = "NavbuddyCursorLine" .. navic.adapt_lsp_num_to_str(node.kind),
 	})
 	vim.api.nvim_win_set_cursor(buf.winid, cursor_pos)
 end
 
 local function get_border_chars(style, section)
-	if style ~= "single" and style ~= "rounded" and
-		style ~= "double" and style ~= "solid" then
+	if style ~= "single" and style ~= "rounded" and style ~= "double" and style ~= "solid" then
 		return style
 	end
 
+	-- stylua: ignore
 	local border_chars = {
 		top_left = {
 			single  = "┌",
@@ -173,26 +183,30 @@ local function get_border_chars(style, section)
 	}
 
 	local border_chars_map = {
-		left = { style = {
-			border_chars.top_left[style],
-			border_chars.top[style],
-			border_chars.top[style],
-			border_chars.blank,
-			border_chars.bottom[style],
-			border_chars.bottom[style],
-			border_chars.bottom_left[style],
-			border_chars.left[style],
-		}},
-		mid = { style = {
-			border_chars.top_T[style],
-			border_chars.top[style],
-			border_chars.top[style],
-			border_chars.blank,
-			border_chars.bottom[style],
-			border_chars.bottom[style],
-			border_chars.bottom_T[style],
-			border_chars.left[style],
-		}},
+		left = {
+			style = {
+				border_chars.top_left[style],
+				border_chars.top[style],
+				border_chars.top[style],
+				border_chars.blank,
+				border_chars.bottom[style],
+				border_chars.bottom[style],
+				border_chars.bottom_left[style],
+				border_chars.left[style],
+			},
+		},
+		mid = {
+			style = {
+				border_chars.top_T[style],
+				border_chars.top[style],
+				border_chars.top[style],
+				border_chars.blank,
+				border_chars.bottom[style],
+				border_chars.bottom[style],
+				border_chars.bottom_T[style],
+				border_chars.left[style],
+			},
+		},
 		right = {
 			border_chars.top_T[style],
 			border_chars.top[style],
@@ -242,13 +256,18 @@ function display:new(obj)
 	})
 
 	local lsp_name = {
-		bottom = nui_text("["..obj.lsp_name.."]", "NavbuddyFloatBorder"),
-		bottom_align = "right"
+		bottom = nui_text("[" .. obj.lsp_name .. "]", "NavbuddyFloatBorder"),
+		bottom_align = "right",
 	}
 
-	if config.window.sections.right.border == "none" or config.window.border == "none"
-		or config.window.sections.right.border == "shadow" or config.window.border == "shadow"
-		or config.window.sections.right.border == "solid" or config.window.border == "solid" then
+	if
+		config.window.sections.right.border == "none"
+		or config.window.border == "none"
+		or config.window.sections.right.border == "shadow"
+		or config.window.border == "shadow"
+		or config.window.sections.right.border == "solid"
+		or config.window.border == "solid"
+	then
 		lsp_name = nil
 	end
 
@@ -256,7 +275,7 @@ function display:new(obj)
 		focusable = false,
 		border = {
 			style = config.window.sections.right.border or get_border_chars(config.window.border, "right"),
-			text = lsp_name
+			text = lsp_name,
 		},
 		win_options = {
 			winhighlight = "FloatBorder:NavbuddyFloatBorder",
@@ -287,7 +306,7 @@ function display:new(obj)
 		leaving_window_for_action = false,
 		leaving_window_for_reorientation = false,
 		closed = false,
-		user_gui_cursor = nil
+		user_gui_cursor = nil,
 	}
 
 	-- Set filetype
@@ -316,23 +335,27 @@ function display:new(obj)
 
 			obj:clear_highlights()
 			obj:focus_range()
-		end
+		end,
 	})
 	vim.api.nvim_create_autocmd("BufLeave", {
 		group = augroup,
 		buffer = obj.mid.bufnr,
 		callback = function()
-			if obj.state.leaving_window_for_action == false and
-				obj.state.leaving_window_for_reorientation == false and
-				obj.state.closed == false then
+			if
+				obj.state.leaving_window_for_action == false
+				and obj.state.leaving_window_for_reorientation == false
+				and obj.state.closed == false
+			then
 				obj:close()
 			end
-		end
+		end,
 	})
 
 	-- Mappings
 	for i, v in pairs(config.mappings) do
-		obj.mid:map("n", i, function() v(obj) end)
+		obj.mid:map("n", i, function()
+			v(obj)
+		end)
 	end
 
 	-- Display
@@ -347,9 +370,9 @@ function display:focus_range()
 	local ranges = nil
 
 	if vim.deep_equal(self.focus_node.scope, self.focus_node.name_range) then
-		ranges = {{"NavbuddyScope", self.focus_node.scope}}
+		ranges = { { "NavbuddyScope", self.focus_node.scope } }
 	else
-		ranges = {{"NavbuddyScope", self.focus_node.scope}, {"NavbuddyName", self.focus_node.name_range}}
+		ranges = { { "NavbuddyScope", self.focus_node.scope }, { "NavbuddyName", self.focus_node.name_range } }
 	end
 
 	if self.config.source_buffer.highlight then
@@ -357,11 +380,32 @@ function display:focus_range()
 			local highlight, range = unpack(v)
 
 			if range["start"].line == range["end"].line then
-				vim.api.nvim_buf_add_highlight(self.for_buf, ns, highlight, range["start"].line-1, range["start"].character, range["end"].character)
+				vim.api.nvim_buf_add_highlight(
+					self.for_buf,
+					ns,
+					highlight,
+					range["start"].line - 1,
+					range["start"].character,
+					range["end"].character
+				)
 			else
-				vim.api.nvim_buf_add_highlight(self.for_buf, ns, highlight, range["start"].line-1, range["start"].character, -1)
-				vim.api.nvim_buf_add_highlight(self.for_buf, ns, highlight, range["end"].line-1, 0, range["end"].character)
-				for i = range["start"].line, range["end"].line-2, 1 do
+				vim.api.nvim_buf_add_highlight(
+					self.for_buf,
+					ns,
+					highlight,
+					range["start"].line - 1,
+					range["start"].character,
+					-1
+				)
+				vim.api.nvim_buf_add_highlight(
+					self.for_buf,
+					ns,
+					highlight,
+					range["end"].line - 1,
+					0,
+					range["end"].character
+				)
+				for i = range["start"].line, range["end"].line - 2, 1 do
 					vim.api.nvim_buf_add_highlight(self.for_buf, ns, highlight, i, 0, -1)
 				end
 			end
@@ -370,7 +414,7 @@ function display:focus_range()
 
 	if self.config.source_buffer.follow_node then
 		local last_range = ranges[#ranges][2]
-		vim.api.nvim_win_set_cursor(self.for_win, {last_range["start"].line, last_range["start"].character})
+		vim.api.nvim_win_set_cursor(self.for_win, { last_range["start"].line, last_range["start"].character })
 
 		self.state.leaving_window_for_reorientation = true
 		vim.api.nvim_set_current_win(self.for_win)
@@ -382,9 +426,12 @@ function display:focus_range()
 				vim.api.nvim_command("normal! zt")
 			else
 				local mid_line = bit.rshift(self.focus_node.scope["start"].line + self.focus_node.scope["end"].line, 1)
-				vim.api.nvim_win_set_cursor(self.for_win, {mid_line, 0})
+				vim.api.nvim_win_set_cursor(self.for_win, { mid_line, 0 })
 				vim.api.nvim_command("normal! zz")
-				vim.api.nvim_win_set_cursor(self.for_win, {self.focus_node.name_range["start"].line, self.focus_node.name_range["start"].character})
+				vim.api.nvim_win_set_cursor(
+					self.for_win,
+					{ self.focus_node.name_range["start"].line, self.focus_node.name_range["start"].character }
+				)
 			end
 		elseif self.config.source_buffer.reorient == "mid" then
 			vim.api.nvim_command("normal! zz")

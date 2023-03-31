@@ -1,4 +1,5 @@
 local navic = require("nvim-navic.lib")
+
 local nui_menu = require("nui.menu")
 
 local display = require("nvim-navbuddy.display")
@@ -11,14 +12,13 @@ local config = {
 		position = "50%",
 		sections = {
 			left = {
-				size = "20%"
+				size = "20%",
 			},
 			mid = {
-				size = "40%"
+				size = "40%",
 			},
-			right = {
-			}
-		}
+			right = {},
+		},
 	},
 	icons = {
 		[1] = " ", -- File
@@ -85,13 +85,13 @@ local config = {
 	},
 	lsp = {
 		auto_attach = false,
-		preference = nil
+		preference = nil,
 	},
 	source_buffer = {
 		follow_node = true,
 		highlight = true,
-		reorient = "smart"
-	}
+		reorient = "smart",
+	},
 }
 
 setmetatable(config.icons, {
@@ -118,7 +118,7 @@ local function choose_lsp_menu(for_buf, make_request)
 
 	for _, v in ipairs(navbuddy_attached_clients[for_buf]) do
 		min_width = math.max(min_width, #v.name)
-		table.insert(lines, nui_menu.item(v.id..":"..v.name))
+		table.insert(lines, nui_menu.item(v.id .. ":" .. v.name))
 	end
 
 	local min_height = #lines
@@ -126,16 +126,16 @@ local function choose_lsp_menu(for_buf, make_request)
 	local selection = nil
 
 	local menu = nui_menu({
-			relative = "editor",
-			position = "50%",
-			border = {
-				style = style,
-				text = {
-					top = "[Choose LSP Client]",
-					top_align = "center",
-				},
+		relative = "editor",
+		position = "50%",
+		border = {
+			style = style,
+			text = {
+				top = "[Choose LSP Client]",
+				top_align = "center",
 			},
-		}, {
+		},
+	}, {
 		lines = lines,
 		min_width = min_width,
 		min_height = min_height,
@@ -145,10 +145,10 @@ local function choose_lsp_menu(for_buf, make_request)
 			close = { "<Esc>", "q", "<C-c>" },
 			submit = { "<CR>", "<Space>", "l" },
 		},
-		on_close = function()
-		end,
+		on_close = function() end,
 		on_submit = function(item)
-			selection = { id = tonumber(string.match(item.text, "%d+")), name = string.sub(string.match(item.text, ":.+"), 2) }
+			selection =
+				{ id = tonumber(string.match(item.text, "%d+")), name = string.sub(string.match(item.text, ":.+"), 2) }
 			make_request(selection)
 		end,
 	})
@@ -157,7 +157,6 @@ local function choose_lsp_menu(for_buf, make_request)
 end
 
 local function request(for_buf, handler)
-
 	local function make_request(client)
 		navic.request_symbol(for_buf, function(bufnr, symbols)
 			navic.update_data(bufnr, symbols)
@@ -179,14 +178,14 @@ local function request(for_buf, handler)
 			for _, attached_lsp in ipairs(navbuddy_attached_clients[for_buf]) do
 				if preferred_lsp == attached_lsp.name then
 					navbuddy_attached_clients[for_buf] = { attached_lsp }
-					found = true;
+					found = true
 					make_request(attached_lsp)
-					break;
+					break
 				end
 			end
 
 			if found then
-				break;
+				break
 			end
 		end
 
@@ -224,7 +223,7 @@ local function handler(bufnr, curr_node, lsp_name)
 		start_cursor = vim.api.nvim_win_get_cursor(vim.api.nvim_get_current_win()),
 		focus_node = curr_node,
 		config = config,
-		lsp_name = lsp_name
+		lsp_name = lsp_name,
 	})
 end
 
@@ -267,7 +266,9 @@ function M.attach(client, bufnr)
 		buffer = bufnr,
 	})
 
-	vim.api.nvim_buf_create_user_command(bufnr, "Navbuddy", function() M.open(bufnr) end, {})
+	vim.api.nvim_buf_create_user_command(bufnr, "Navbuddy", function()
+		M.open(bufnr)
+	end, {})
 end
 
 function M.setup(user_config)
@@ -277,12 +278,13 @@ function M.setup(user_config)
 		end
 
 		-- If one is set, default for others should be none
-		if config.window.sections.left.border ~= nil or
-			config.window.sections.mid.border ~= nil or
-			config.window.sections.right.border ~= nil then
-
-			config.window.sections.left.border  = config.window.sections.left.border or "none"
-			config.window.sections.mid.border   = config.window.sections.mid.border or "none"
+		if
+			config.window.sections.left.border ~= nil
+			or config.window.sections.mid.border ~= nil
+			or config.window.sections.right.border ~= nil
+		then
+			config.window.sections.left.border = config.window.sections.left.border or "none"
+			config.window.sections.mid.border = config.window.sections.mid.border or "none"
 			config.window.sections.right.border = config.window.sections.right.border or "none"
 		end
 
