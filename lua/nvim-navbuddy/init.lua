@@ -169,7 +169,7 @@ local function request(for_buf, handler)
 			local curr_node = context_data[#context_data]
 
 			handler(for_buf, curr_node, client.name)
-		end, client.id)
+		end, client)
 	end
 
 	if #navbuddy_attached_clients[for_buf] == 1 then
@@ -253,7 +253,7 @@ function M.attach(client, bufnr)
 	if navbuddy_attached_clients[bufnr] == nil then
 		navbuddy_attached_clients[bufnr] = {}
 	end
-	table.insert(navbuddy_attached_clients[bufnr], { id = client.id, name = client.name })
+	table.insert(navbuddy_attached_clients[bufnr], client)
 
 	local navbuddy_augroup = vim.api.nvim_create_augroup("navbuddy", { clear = false })
 	vim.api.nvim_clear_autocmds({
