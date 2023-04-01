@@ -82,6 +82,9 @@ local config = {
 
 		["<enter>"] = actions.select,
 		["o"] = actions.select,
+
+		["J"] = actions.move_down,
+		["K"] = actions.move_up,
 	},
 	lsp = {
 		auto_attach = false,

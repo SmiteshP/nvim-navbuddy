@@ -159,6 +159,9 @@ navbuddy.setup {
 
         ["<enter>"] = actions.select,     -- Goto selected symbol
         ["o"] = actions.select,
+
+        ["J"] = actions.move_down,        -- Move focused node down
+        ["K"] = actions.move_up,          -- Move focused node up
     },
     lsp = {
         auto_attach = false,  -- If set to true, you don't need to manually use attach function
