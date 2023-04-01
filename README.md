@@ -85,16 +85,16 @@ navbuddy.setup {
         sections = {
             left = {
                 size = "20%",
-                border = nil -- You can set border style for each section individually as well.
+                border = nil, -- You can set border style for each section individually as well.
             },
             mid = {
                 size = "40%",
-                border = nil
+                border = nil,
             },
             right = {
                 -- No size option for right most section. It fills to
                 -- remaining area.
-                border = nil
+                border = nil,
             }
         }
     },
@@ -165,12 +165,12 @@ navbuddy.setup {
     },
     lsp = {
         auto_attach = false,  -- If set to true, you don't need to manually use attach function
-        preference = nil      -- list of lsp server names in order of preference
+        preference = nil,      -- list of lsp server names in order of preference
     },
     source_buffer = {
         follow_node = true,   -- Keep the current node in focus on the source buffer
-        highlight = true      -- Highlight the currently focused node
-        reorient = "smart"    -- "smart", "top", "mid" or "none"
+        highlight = true,      -- Highlight the currently focused node
+        reorient = "smart",    -- "smart", "top", "mid" or "none"
     }
 }
 ```
