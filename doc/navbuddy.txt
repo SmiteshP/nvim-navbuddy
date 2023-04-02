@@ -185,8 +185,8 @@ Defaults >
 		},
 		source_buffer = {
 			follow_node = true,   -- Keep the current node in focus on the source buffer
-			highlight = true      -- Highlight the currently focused node
-			reorient = "smart"    -- "smart", "top", "mid" or "none"
+			highlight = true,     -- Highlight the currently focused node
+			reorient = "smart",   -- "smart", "top", "mid" or "none"
 		}
 	}
 <
