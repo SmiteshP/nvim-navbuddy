@@ -10,6 +10,7 @@ local config = {
 		border = "single",
 		size = "60%",
 		position = "50%",
+		scrolloff = nil,
 		sections = {
 			left = {
 				size = "20%",
@@ -94,6 +95,7 @@ local config = {
 		follow_node = true,
 		highlight = true,
 		reorient = "smart",
+		scrolloff = nil
 	},
 }
 

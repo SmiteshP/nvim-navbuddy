@@ -100,6 +100,7 @@ Defaults >
     							-- starting with the top-left corner. eg: { "╔", "═" ,"╗", "║", "╝", "═", "╚", "║" }.
 			size = "60%",
 			position = "50%",
+			scrolloff = nil,    -- scrolloff value within navbuddy window
 			sections = {
 				left = {
 					size = "20%",
@@ -187,6 +188,7 @@ Defaults >
 			follow_node = true,   -- Keep the current node in focus on the source buffer
 			highlight = true,     -- Highlight the currently focused node
 			reorient = "smart",   -- "smart", "top", "mid" or "none"
+			scrolloff = nil       -- scrolloff value when navbuddy is open
 		}
 	}
 <

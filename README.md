@@ -82,6 +82,7 @@ navbuddy.setup {
                             -- starting with the top-left corner. eg: { "╔", "═" ,"╗", "║", "╝", "═", "╚", "║" }.
         size = "60%",
         position = "50%",
+        scrolloff = nil,    -- scrolloff value within navbuddy window
         sections = {
             left = {
                 size = "20%",
@@ -164,13 +165,14 @@ navbuddy.setup {
         ["K"] = actions.move_up,          -- Move focused node up
     },
     lsp = {
-        auto_attach = false,  -- If set to true, you don't need to manually use attach function
+        auto_attach = false,   -- If set to true, you don't need to manually use attach function
         preference = nil,      -- list of lsp server names in order of preference
     },
     source_buffer = {
-        follow_node = true,   -- Keep the current node in focus on the source buffer
+        follow_node = true,    -- Keep the current node in focus on the source buffer
         highlight = true,      -- Highlight the currently focused node
         reorient = "smart",    -- "smart", "top", "mid" or "none"
+        scrolloff = nil        -- scrolloff value when navbuddy is open
     }
 }
 ```

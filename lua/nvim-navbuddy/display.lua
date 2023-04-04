@@ -249,6 +249,7 @@ function display:new(obj)
 		border = config.window.sections.mid.border or get_border_chars(config.window.border, "mid"),
 		win_options = {
 			winhighlight = "FloatBorder:NavbuddyFloatBorder",
+			scrolloff = config.window.scrolloff
 		},
 		buf_options = {
 			modifiable = false,
@@ -307,6 +308,7 @@ function display:new(obj)
 		leaving_window_for_reorientation = false,
 		closed = false,
 		user_gui_cursor = nil,
+		source_buffer_scrolloff = nil
 	}
 
 	-- Set filetype
@@ -316,6 +318,12 @@ function display:new(obj)
 	obj.state.user_gui_cursor = vim.api.nvim_get_option("guicursor")
 	if obj.state.user_gui_cursor ~= "" then
 		vim.api.nvim_set_option("guicursor", "a:NavbuddyCursor")
+	end
+
+	-- User Scrolloff
+	if config.source_buffer.scrolloff then
+		obj.state.source_buffer_scrolloff = vim.api.nvim_get_option("scrolloff")
+		vim.api.nvim_set_option("scrolloff", config.source_buffer.scrolloff)
 	end
 
 	-- Autocmds
@@ -472,6 +480,9 @@ end
 function display:close()
 	self.state.closed = true
 	vim.api.nvim_set_option("guicursor", self.state.user_gui_cursor)
+	if self.state.source_buffer_scrolloff then
+		vim.api.nvim_set_option("scrolloff", self.state.source_buffer_scrolloff)
+	end
 	self.layout:unmount()
 	self:clear_highlights()
 end
