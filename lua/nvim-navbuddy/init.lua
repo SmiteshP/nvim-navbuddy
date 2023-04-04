@@ -90,6 +90,7 @@ local config = {
 	lsp = {
 		auto_attach = false,
 		preference = nil,
+		reparse = nil
 	},
 	source_buffer = {
 		follow_node = true,
@@ -220,6 +221,10 @@ local function handler(bufnr, curr_node, lsp_name)
 		else
 			return
 		end
+	end
+
+	if config.reparse ~= nil then
+		curr_node = config.reparse(curr_node)
 	end
 
 	display:new({
