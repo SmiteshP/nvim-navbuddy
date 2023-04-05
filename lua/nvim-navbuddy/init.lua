@@ -152,9 +152,13 @@ local function choose_lsp_menu(for_buf, make_request)
 		},
 		on_close = function() end,
 		on_submit = function(item)
-			selection =
-				{ id = tonumber(string.match(item.text, "%d+")), name = string.sub(string.match(item.text, ":.+"), 2) }
-			make_request(selection)
+			local id = tonumber(string.match(item.text, "%d+"))
+			for _, check_client in ipairs(navbuddy_attached_clients[for_buf]) do
+				if id == check_client.id then
+					make_request(check_client)
+					return
+				end
+			end
 		end,
 	})
 
