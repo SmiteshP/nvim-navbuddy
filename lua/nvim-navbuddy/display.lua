@@ -4,6 +4,8 @@ local nui_popup = require("nui.popup")
 local nui_layout = require("nui.layout")
 local nui_text = require("nui.text")
 
+local ui = require("nvim-navbuddy.ui")
+
 local ns = vim.api.nvim_create_namespace("nvim-navbuddy")
 
 local function highlight_setup()
@@ -112,115 +114,6 @@ local function fill_buffer(buf, node, config)
 	vim.api.nvim_win_set_cursor(buf.winid, cursor_pos)
 end
 
-local function get_border_chars(style, section)
-	if style ~= "single" and style ~= "rounded" and style ~= "double" and style ~= "solid" then
-		return style
-	end
-
-	-- stylua: ignore
-	local border_chars = {
-		top_left = {
-			single  = "┌",
-			rounded = "╭",
-			double  = "╔",
-			solid   = "▛",
-		},
-		top = {
-			single  = "─",
-			rounded = "─",
-			double  = "═",
-			solid   = "▀",
-		},
-		top_right = {
-			single  = "┐",
-			rounded = "╮",
-			double  = "╗",
-			solid   = "▜",
-		},
-		right = {
-			single  = "│",
-			rounded = "│",
-			double  = "║",
-			solid   = "▐",
-		},
-		bottom_right = {
-			single  = "┘",
-			rounded = "╯",
-			double  = "╝",
-			solid   = "▟",
-		},
-		bottom = {
-			single  = "─",
-			rounded = "─",
-			double  = "═",
-			solid   = "▄",
-		},
-		bottom_left = {
-			single  = "└",
-			rounded = "╰",
-			double  = "╚",
-			solid   = "▙",
-		},
-		left = {
-			single  = "│",
-			rounded = "│",
-			double  = "║",
-			solid   = "▌",
-		},
-		top_T = {
-			single  = "┬",
-			rounded = "┬",
-			double  = "╦",
-			solid   = "▛",
-		},
-		bottom_T = {
-			single  = "┴",
-			rounded = "┴",
-			double  = "╩",
-			solid   = "▙",
-		},
-		blank = " ",
-	}
-
-	local border_chars_map = {
-		left = {
-			style = {
-				border_chars.top_left[style],
-				border_chars.top[style],
-				border_chars.top[style],
-				border_chars.blank,
-				border_chars.bottom[style],
-				border_chars.bottom[style],
-				border_chars.bottom_left[style],
-				border_chars.left[style],
-			},
-		},
-		mid = {
-			style = {
-				border_chars.top_T[style],
-				border_chars.top[style],
-				border_chars.top[style],
-				border_chars.blank,
-				border_chars.bottom[style],
-				border_chars.bottom[style],
-				border_chars.bottom_T[style],
-				border_chars.left[style],
-			},
-		},
-		right = {
-			border_chars.top_T[style],
-			border_chars.top[style],
-			border_chars.top_right[style],
-			border_chars.right[style],
-			border_chars.bottom_right[style],
-			border_chars.bottom[style],
-			border_chars.bottom_T[style],
-			border_chars.left[style],
-		},
-	}
-	return border_chars_map[section]
-end
-
 local display = {}
 
 function display:new(obj)
@@ -235,7 +128,7 @@ function display:new(obj)
 	-- NUI elements
 	local left_popup = nui_popup({
 		focusable = false,
-		border = config.window.sections.left.border or get_border_chars(config.window.border, "left"),
+		border = config.window.sections.left.border or ui.get_border_chars(config.window.border, "left"),
 		win_options = {
 			winhighlight = "FloatBorder:NavbuddyFloatBorder",
 		},
@@ -246,7 +139,7 @@ function display:new(obj)
 
 	local mid_popup = nui_popup({
 		enter = true,
-		border = config.window.sections.mid.border or get_border_chars(config.window.border, "mid"),
+		border = config.window.sections.mid.border or ui.get_border_chars(config.window.border, "mid"),
 		win_options = {
 			winhighlight = "FloatBorder:NavbuddyFloatBorder",
 			scrolloff = config.window.scrolloff
@@ -275,7 +168,7 @@ function display:new(obj)
 	local right_popup = nui_popup({
 		focusable = false,
 		border = {
-			style = config.window.sections.right.border or get_border_chars(config.window.border, "right"),
+			style = config.window.sections.right.border or ui.get_border_chars(config.window.border, "right"),
 			text = lsp_name,
 		},
 		win_options = {
