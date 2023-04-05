@@ -50,6 +50,7 @@ local config = {
 		[26] = " ", -- TypeParameter
 		[255] = " ", -- Macro
 	},
+	use_default_mappings = true,
 	mappings = {
 		["<esc>"] = actions.close,
 		["q"] = actions.close,
@@ -127,8 +128,6 @@ local function choose_lsp_menu(for_buf, make_request)
 	end
 
 	local min_height = #lines
-
-	local selection = nil
 
 	local menu = nui_menu({
 		relative = "editor",
@@ -305,8 +304,16 @@ function M.setup(user_config)
 			end
 		end
 
+		if user_config.use_default_mappings ~= nil then
+			config.use_default_mappings = user_config.use_default_mappings
+		end
+
 		if user_config.mappings ~= nil then
-			config.mappings = user_config.mappings
+			if config.use_default_mappings then
+				config.mappings = vim.tbl_deep_extend("keep", user_config.mappings, config.mappings)
+			else
+				config.mappings = user_config.mappings
+			end
 		end
 
 		if user_config.lsp ~= nil then

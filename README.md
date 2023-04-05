@@ -61,15 +61,15 @@ Use `setup` to override any of the default options
 
 * `icons` : Indicate the type of symbol captured. Default icons assume you have nerd-fonts.
 * `window` : Set options related to window's "border", "size", "position".
+* `use_default_mappings`: If set to false, only mappings set by user are set. Else default mappings are used for keys that are not set by user.
 * `mappings` : Actions to be triggered for specified keybindings. If you wish to set custom keybindings, you will have to set all the keybindings.
 * `lsp` :
-	* `auto_attach` : Enable to have Navbuddy automatically attach to every LSP for current buffer. Its disabled by default.
-	* `preference` : Table ranking lsp_servers. Lower the index, higher the priority of the server. If there are more than one server attached to a buffer, navbuddy will refer to this list to make a decision on which one to use.
-			for example - In case a buffer is attached to clangd and ccls both and the preference list is `{ "clangd", "pyright" }`. Then clangd will be prefered.
+    * `auto_attach` : Enable to have Navbuddy automatically attach to every LSP for current buffer. Its disabled by default.
+    * `preference` : Table ranking lsp_servers. Lower the index, higher the priority of the server. If there are more than one server attached to a buffer, navbuddy will refer to this list to make a decision on which one to use. for example - In case a buffer is attached to clangd and ccls both and the preference list is `{ "clangd", "pyright" }`. Then clangd will be prefered.
 * `source_buffer` :
-	* `follow_node` : Keep the current node in focus on the source buffer
-	* `highlight` : Highlight the currently focused node
-	* reorient: Reorient buffer after changing nodes. options are "smart", "top", "mid" or "none"
+    * `follow_node` : Keep the current node in focus on the source buffer
+    * `highlight` : Highlight the currently focused node
+    * reorient: Reorient buffer after changing nodes. options are "smart", "top", "mid" or "none"
 
 ```lua
 local navbuddy = require("nvim-navbuddy")
@@ -127,6 +127,10 @@ navbuddy.setup {
         Operator      = " ",
         TypeParameter = " ",
     },
+    use_default_mappings = true,          -- If set to false, only mappings set
+                                          -- by user are set. Else default
+                                          -- mappings are used for keys
+                                          -- that are not set by user
     mappings = {
         ["<esc>"] = actions.close,        -- Close and cursor to original location
         ["q"] = actions.close,

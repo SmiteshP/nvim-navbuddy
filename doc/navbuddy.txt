@@ -62,6 +62,10 @@ Use |navbuddy.setup| to override any of the default options
 	window: table
 		Set options related to window's "border", "size", "position".
 
+	use_default_mappings: boolean
+		If set to false, only mappings set by user are set. Else default mappings 
+		are used for keys that are not set by user.
+
 	mappings: table
 		Actions to be triggered for specified keybindings. If you wish to set
 		custom keybindings, you will have to set all the keybindings
@@ -97,7 +101,7 @@ Defaults >
 		window = {
 			border = "single",  -- "rounded", "double", "solid", "none"
 								-- or an array with eight chars building up the border in a clockwise fashion
-    							-- starting with the top-left corner. eg: { "╔", "═" ,"╗", "║", "╝", "═", "╚", "║" }.
+								-- starting with the top-left corner. eg: { "╔", "═" ,"╗", "║", "╝", "═", "╚", "║" }.
 			size = "60%",
 			position = "50%",
 			scrolloff = nil,    -- scrolloff value within navbuddy window
@@ -146,6 +150,10 @@ Defaults >
 			[26] = " ", -- TypeParameter
 			[255] = " ", -- Macro
 		},
+		use_default_mappings = true,          -- If set to false, only mappings set
+											  -- by user are set. Else default
+											  -- mappings are used for keys
+											  -- that are not set by user
 		mappings = {
 			["<esc>"] = actions.close,        -- Close and cursor to original location
 			["q"] = actions.close,
