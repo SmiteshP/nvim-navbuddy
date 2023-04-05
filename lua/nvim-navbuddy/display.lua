@@ -18,6 +18,9 @@ local function clear_buffer(buf)
 	vim.api.nvim_buf_set_option(buf.bufnr, "modifiable", true)
 	vim.api.nvim_buf_set_lines(buf.bufnr, 0, -1, false, {})
 	vim.api.nvim_buf_set_option(buf.bufnr, "modifiable", false)
+	for _, extmark in ipairs(vim.api.nvim_buf_get_extmarks(buf.bufnr, ns, 0, -1, {})) do
+		vim.api.nvim_buf_del_extmark(buf.bufnr, ns, extmark[1])
+	end
 end
 
 local function fill_buffer(buf, node, config)
@@ -36,19 +39,26 @@ local function fill_buffer(buf, node, config)
 	vim.api.nvim_buf_set_lines(buf.bufnr, 0, -1, false, lines)
 	vim.api.nvim_buf_set_option(buf.bufnr, "modifiable", false)
 
+	if cursor_pos[1] ~= node.index then
+		cursor_pos[1] = node.index
+	end
+
 	for i, child_node in ipairs(parent.children) do
+		local hl_group = "Navbuddy" .. navic.adapt_lsp_num_to_str(child_node.kind)
 		vim.api.nvim_buf_add_highlight(
 			buf.bufnr,
 			ns,
-			"Navbuddy" .. navic.adapt_lsp_num_to_str(child_node.kind),
+			hl_group,
 			i - 1,
 			0,
 			-1
 		)
-	end
-
-	if cursor_pos[1] ~= node.index then
-		cursor_pos[1] = node.index
+		if child_node.children ~= nil then
+			vim.api.nvim_buf_set_extmark(buf.bufnr, ns, i - 1, #lines[i], {
+				virt_text = { { " >", i == cursor_pos[1] and { "NavbuddyCursorLine", hl_group } or hl_group } },
+				virt_text_pos = "right_align",
+			})
+		end
 	end
 
 	vim.api.nvim_buf_add_highlight(buf.bufnr, ns, "NavbuddyCursorLine", cursor_pos[1] - 1, 0, -1)
