@@ -60,6 +60,7 @@ local config = {
 
 		["h"] = actions.parent,
 		["l"] = actions.children,
+		["0"] = actions.root,
 
 		["v"] = actions.visual_name,
 		["V"] = actions.visual_scope,
