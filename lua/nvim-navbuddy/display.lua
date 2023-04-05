@@ -53,12 +53,14 @@ local function fill_buffer(buf, node, config)
 			0,
 			-1
 		)
-		if child_node.children ~= nil then
-			vim.api.nvim_buf_set_extmark(buf.bufnr, ns, i - 1, #lines[i], {
-				virt_text = { { " >", i == cursor_pos[1] and { "NavbuddyCursorLine", hl_group } or hl_group } },
-				virt_text_pos = "right_align",
-			})
-		end
+		vim.api.nvim_buf_set_extmark(buf.bufnr, ns, i - 1, #lines[i], {
+			virt_text = { {
+				child_node.children ~= nil and " > " or i == cursor_pos[1] and " 󰗼 " or "   ",
+				i == cursor_pos[1] and { "NavbuddyCursorLine", hl_group } or hl_group,
+			} },
+			virt_text_pos = "right_align",
+			virt_text_hide = false,
+		})
 	end
 
 	vim.api.nvim_buf_add_highlight(buf.bufnr, ns, "NavbuddyCursorLine", cursor_pos[1] - 1, 0, -1)
