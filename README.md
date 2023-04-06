@@ -140,6 +140,7 @@ navbuddy.setup {
 
         ["h"] = actions.parent,           -- Move to left panel
         ["l"] = actions.children,         -- Move to right panel
+        ["0"] = actions.root,             -- Move to first panel
 
         ["v"] = actions.visual_name,      -- Visual selection of name
         ["V"] = actions.visual_scope,     -- Visual selection of scope
