@@ -55,6 +55,28 @@ require("lspconfig").clangd.setup {
 }
 ```
 
+### Lazy Loading
+
+If you want to lazy load navbuddy you need to load it before your Lsp related Stuff.
+
+For Example with [Lazy](https://github.com/folke/lazy.nvim) and [lspconfig](https://github.com/neovim/nvim-lspconfig)
+
+```lua
+return {
+    "neovim/nvim-lspconfig",
+    dependencies = {
+        {
+            "SmiteshP/nvim-navbuddy",
+            dependencies = {
+                "SmiteshP/nvim-navic",
+                "MunifTanjim/nui.nvim"
+            }
+        }
+    },
+    -- your lsp config or other stuff
+}
+```
+
 ## 🪄 Customise
 
 Use `setup` to override any of the default options
