@@ -65,6 +65,18 @@ function actions.children(display)
 	display:redraw()
 end
 
+function actions.root(display)
+	if display.focus_node.parent.is_root then
+		return
+	end
+
+	while not display.focus_node.parent.is_root do
+		display.focus_node = display.focus_node.parent
+	end
+
+	display:redraw()
+end
+
 function actions.select(display)
 	display:close()
 	-- to push location to jumplist:

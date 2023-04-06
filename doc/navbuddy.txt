@@ -163,6 +163,7 @@ Defaults >
 
 			["h"] = actions.parent,           -- Move to left panel
 			["l"] = actions.children,         -- Move to right panel
+			["0"] = actions.root,             -- Move to first panel
 
 			["v"] = actions.visual_name,      -- Visual selection of name
 			["V"] = actions.visual_scope,     -- Visual selection of scope
@@ -219,6 +220,9 @@ Actions                                                         *navbuddy-action
 
 *actions.children* (opts)
 	Move to children of current, right of current node, in Navbuddy window.
+
+*actions.root* (opts)
+	Move to root node, the first node left of current node, in Navbuddy window.
 
 *actions.select* (opts)
 	Goto currently focus node.
