@@ -10,8 +10,13 @@ function actions.next_sibling(display)
 		return
 	end
 
-	local next_node = display.focus_node.next
-	display.focus_node = next_node
+	for _ = 1, vim.v.count1 do
+		local next_node = display.focus_node.next
+		if next_node == nil then
+			break
+		end
+		display.focus_node = next_node
+	end
 
 	display:redraw()
 end
@@ -21,8 +26,13 @@ function actions.previous_sibling(display)
 		return
 	end
 
-	local prev_node = display.focus_node.prev
-	display.focus_node = prev_node
+	for _ = 1, vim.v.count1 do
+		local prev_node = display.focus_node.prev
+		if prev_node == nil then
+			break
+		end
+		display.focus_node = prev_node
+	end
 
 	display:redraw()
 end
