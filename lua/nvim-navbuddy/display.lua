@@ -9,9 +9,45 @@ local ui = require("nvim-navbuddy.ui")
 local ns = vim.api.nvim_create_namespace("nvim-navbuddy")
 
 local function clear_buffer(buf)
+	vim.api.nvim_win_set_buf(buf.winid, buf.bufnr)
 	vim.api.nvim_buf_set_option(buf.bufnr, "modifiable", true)
 	vim.api.nvim_buf_set_lines(buf.bufnr, 0, -1, false, {})
 	vim.api.nvim_buf_set_option(buf.bufnr, "modifiable", false)
+end
+
+local function show_preview(disp, for_buf)
+	vim.api.nvim_win_set_buf(disp.right.winid, for_buf)
+
+	local ranges = nil
+
+	if vim.deep_equal(disp.focus_node.scope, disp.focus_node.name_range) then
+		ranges = { { "NavbuddyScope", disp.focus_node.scope } }
+	else
+		ranges = { { "NavbuddyScope", disp.focus_node.scope }, { "NavbuddyName", disp.focus_node.name_range } }
+	end
+
+	local last_range = ranges[#ranges][2]
+	vim.api.nvim_win_set_cursor(disp.right.winid, { last_range["start"].line, last_range["start"].character })
+
+	disp.state.leaving_window_for_reorientation = true
+	vim.api.nvim_set_current_win(disp.right.winid)
+
+	local total_lines = disp.focus_node.scope["end"].line - disp.focus_node.scope["start"].line + 1
+
+	if total_lines >= vim.api.nvim_win_get_height(disp.right.winid) then
+		vim.api.nvim_command("normal! zt")
+	else
+		local mid_line = bit.rshift(disp.focus_node.scope["start"].line + disp.focus_node.scope["end"].line, 1)
+		vim.api.nvim_win_set_cursor(disp.right.winid, { mid_line, 0 })
+		vim.api.nvim_command("normal! zz")
+		vim.api.nvim_win_set_cursor(
+		disp.right.winid,
+		{ disp.focus_node.name_range["start"].line, disp.focus_node.name_range["start"].character }
+		)
+	end
+
+	vim.api.nvim_set_current_win(disp.mid.winid)
+	disp.state.leaving_window_for_reorientation = false
 end
 
 local function fill_buffer(buf, node, config)
@@ -113,6 +149,7 @@ function display:new(obj)
 		},
 		win_options = {
 			winhighlight = "FloatBorder:NavbuddyFloatBorder",
+			scrolloff = 0
 		},
 		buf_options = {
 			modifiable = false,
@@ -300,7 +337,7 @@ function display:redraw()
 			fill_buffer(self.right, node.children[1], self.config)
 		end
 	else
-		clear_buffer(self.right)
+		show_preview(self, self.for_buf)
 	end
 
 	if node.parent.is_root then
