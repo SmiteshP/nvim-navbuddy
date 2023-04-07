@@ -9,6 +9,12 @@ local ui = require("nvim-navbuddy.ui")
 local ns = vim.api.nvim_create_namespace("nvim-navbuddy")
 
 local function clear_buffer(buf)
+	vim.api.nvim_win_set_buf(buf.winid, buf.bufnr)
+
+	vim.api.nvim_win_set_option(buf.winid, "signcolumn", "no")
+	vim.api.nvim_win_set_option(buf.winid, "foldlevel", 100)
+	vim.api.nvim_win_set_option(buf.winid, "wrap", true)
+
 	vim.api.nvim_buf_set_option(buf.bufnr, "modifiable", true)
 	vim.api.nvim_buf_set_lines(buf.bufnr, 0, -1, false, {})
 	vim.api.nvim_buf_set_option(buf.bufnr, "modifiable", false)
@@ -113,6 +119,7 @@ function display:new(obj)
 		},
 		win_options = {
 			winhighlight = "FloatBorder:NavbuddyFloatBorder",
+			scrolloff = 0,
 		},
 		buf_options = {
 			modifiable = false,
@@ -254,34 +261,61 @@ function display:focus_range()
 	end
 
 	if self.config.source_buffer.follow_node then
-		local last_range = ranges[#ranges][2]
-		vim.api.nvim_win_set_cursor(self.for_win, { last_range["start"].line, last_range["start"].character })
+		self:reorient(self.for_win, self.config.source_buffer.reorient)
+	end
+end
 
-		self.state.leaving_window_for_reorientation = true
-		vim.api.nvim_set_current_win(self.for_win)
+function display:reorient(ro_win, reorient_method)
+	vim.api.nvim_win_set_cursor(ro_win, { self.focus_node.name_range["start"].line, self.focus_node.name_range["start"].character })
 
-		if self.config.source_buffer.reorient == "smart" then
-			local total_lines = self.focus_node.scope["end"].line - self.focus_node.scope["start"].line + 1
+	self.state.leaving_window_for_reorientation = true
+	vim.api.nvim_set_current_win(ro_win)
 
-			if total_lines >= vim.api.nvim_win_get_height(self.for_win) then
-				vim.api.nvim_command("normal! zt")
-			else
-				local mid_line = bit.rshift(self.focus_node.scope["start"].line + self.focus_node.scope["end"].line, 1)
-				vim.api.nvim_win_set_cursor(self.for_win, { mid_line, 0 })
-				vim.api.nvim_command("normal! zz")
-				vim.api.nvim_win_set_cursor(
-					self.for_win,
-					{ self.focus_node.name_range["start"].line, self.focus_node.name_range["start"].character }
-				)
-			end
-		elseif self.config.source_buffer.reorient == "mid" then
-			vim.api.nvim_command("normal! zz")
-		elseif self.config.source_buffer.reorient == "top" then
+	if reorient_method == "smart" then
+		local total_lines = self.focus_node.scope["end"].line - self.focus_node.scope["start"].line + 1
+
+		if total_lines >= vim.api.nvim_win_get_height(ro_win) then
 			vim.api.nvim_command("normal! zt")
+		else
+			local mid_line = bit.rshift(self.focus_node.scope["start"].line + self.focus_node.scope["end"].line, 1)
+			vim.api.nvim_win_set_cursor(ro_win, { mid_line, 0 })
+			vim.api.nvim_command("normal! zz")
+			vim.api.nvim_win_set_cursor(
+			ro_win,
+			{ self.focus_node.name_range["start"].line, self.focus_node.name_range["start"].character }
+			)
 		end
+	elseif reorient_method == "mid" then
+		vim.api.nvim_command("normal! zz")
+	elseif reorient_method == "top" then
+		vim.api.nvim_command("normal! zt")
+	end
 
-		vim.api.nvim_set_current_win(self.mid.winid)
-		self.state.leaving_window_for_reorientation = false
+	vim.api.nvim_set_current_win(self.mid.winid)
+	self.state.leaving_window_for_reorientation = false
+end
+
+function display:show_preview()
+	vim.api.nvim_win_set_buf(self.right.winid, self.for_buf)
+
+	vim.api.nvim_win_set_option(self.right.winid, "signcolumn", "no")
+	vim.api.nvim_win_set_option(self.right.winid, "foldlevel", 100)
+	vim.api.nvim_win_set_option(self.right.winid, "wrap", false)
+
+	self:reorient(self.right.winid, "smart")
+end
+
+function display:hide_preview()
+	vim.api.nvim_win_set_buf(self.right.winid, self.right.bufnr)
+	local node = self.focus_node
+	if node.children then
+		if node.memory then
+			fill_buffer(self.right, node.children[node.memory], self.config)
+		else
+			fill_buffer(self.right, node.children[1], self.config)
+		end
+	else
+		clear_buffer(self.right)
 	end
 end
 
@@ -293,14 +327,24 @@ function display:redraw()
 	local node = self.focus_node
 	fill_buffer(self.mid, node, self.config)
 
-	if node.children then
-		if node.memory then
-			fill_buffer(self.right, node.children[node.memory], self.config)
-		else
-			fill_buffer(self.right, node.children[1], self.config)
-		end
+	local preview_method = self.config.window.sections.right.preview
+
+	if preview_method == "always" then
+		self:show_preview()
 	else
-		clear_buffer(self.right)
+		if node.children then
+			if node.memory then
+				fill_buffer(self.right, node.children[node.memory], self.config)
+			else
+				fill_buffer(self.right, node.children[1], self.config)
+			end
+		else
+			if preview_method == "leaf" then
+				self:show_preview()
+			else
+				clear_buffer(self.right)
+			end
+		end
 	end
 
 	if node.parent.is_root then

@@ -96,6 +96,8 @@ navbuddy.setup {
                 -- No size option for right most section. It fills to
                 -- remaining area.
                 border = nil,
+                preview = "leaf",  -- Right section can show previews too.
+                                   -- Options: "leaf", "always" or "never"
             }
         }
     },
