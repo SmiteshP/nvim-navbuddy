@@ -115,7 +115,6 @@ function display:new(obj)
 		win_options = {
 			winhighlight = "FloatBorder:NavbuddyFloatBorder",
 			scrolloff = config.source_buffer.scrolloff,
-			signcolumn = "no"
 		},
 		buf_options = {
 			modifiable = false,
@@ -206,6 +205,9 @@ function display:new(obj)
 	layout:mount()
 	obj:redraw()
 	obj:focus_range()
+
+	-- Disable right section's signcolumn
+	vim.api.nvim_win_set_option(obj.right.winid, "signcolumn", "no")
 
 	return obj
 end
