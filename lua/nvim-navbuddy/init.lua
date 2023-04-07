@@ -18,7 +18,9 @@ local config = {
 			mid = {
 				size = "40%",
 			},
-			right = {},
+			right = {
+				preview = "leaf",
+			},
 		},
 	},
 	icons = {

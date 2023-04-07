@@ -10,6 +10,11 @@ local ns = vim.api.nvim_create_namespace("nvim-navbuddy")
 
 local function clear_buffer(buf)
 	vim.api.nvim_win_set_buf(buf.winid, buf.bufnr)
+
+	vim.api.nvim_win_set_option(buf.winid, "signcolumn", "no")
+	vim.api.nvim_win_set_option(buf.winid, "foldlevel", 100)
+	vim.api.nvim_win_set_option(buf.winid, "wrap", true)
+
 	vim.api.nvim_buf_set_option(buf.bufnr, "modifiable", true)
 	vim.api.nvim_buf_set_lines(buf.bufnr, 0, -1, false, {})
 	vim.api.nvim_buf_set_option(buf.bufnr, "modifiable", false)
@@ -114,7 +119,7 @@ function display:new(obj)
 		},
 		win_options = {
 			winhighlight = "FloatBorder:NavbuddyFloatBorder",
-			scrolloff = config.source_buffer.scrolloff,
+			scrolloff = 0,
 		},
 		buf_options = {
 			modifiable = false,
@@ -206,9 +211,6 @@ function display:new(obj)
 	obj:redraw()
 	obj:focus_range()
 
-	-- Disable right section's signcolumn
-	vim.api.nvim_win_set_option(obj.right.winid, "signcolumn", "no")
-
 	return obj
 end
 
@@ -295,6 +297,11 @@ end
 
 function display:show_preview()
 	vim.api.nvim_win_set_buf(self.right.winid, self.for_buf)
+
+	vim.api.nvim_win_set_option(self.right.winid, "signcolumn", "no")
+	vim.api.nvim_win_set_option(self.right.winid, "foldlevel", 100)
+	vim.api.nvim_win_set_option(self.right.winid, "wrap", false)
+
 	self:reorient(self.right.winid, "smart")
 end
 
@@ -320,14 +327,24 @@ function display:redraw()
 	local node = self.focus_node
 	fill_buffer(self.mid, node, self.config)
 
-	if node.children then
-		if node.memory then
-			fill_buffer(self.right, node.children[node.memory], self.config)
-		else
-			fill_buffer(self.right, node.children[1], self.config)
-		end
-	else
+	local preview_method = self.config.window.sections.right.preview
+
+	if preview_method == "always" then
 		self:show_preview()
+	else
+		if node.children then
+			if node.memory then
+				fill_buffer(self.right, node.children[node.memory], self.config)
+			else
+				fill_buffer(self.right, node.children[1], self.config)
+			end
+		else
+			if preview_method == "leaf" then
+				self:show_preview()
+			else
+				clear_buffer(self.right)
+			end
+		end
 	end
 
 	if node.parent.is_root then
