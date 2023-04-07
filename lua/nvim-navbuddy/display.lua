@@ -15,41 +15,6 @@ local function clear_buffer(buf)
 	vim.api.nvim_buf_set_option(buf.bufnr, "modifiable", false)
 end
 
-local function show_preview(disp, for_buf)
-	vim.api.nvim_win_set_buf(disp.right.winid, for_buf)
-
-	local ranges = nil
-
-	if vim.deep_equal(disp.focus_node.scope, disp.focus_node.name_range) then
-		ranges = { { "NavbuddyScope", disp.focus_node.scope } }
-	else
-		ranges = { { "NavbuddyScope", disp.focus_node.scope }, { "NavbuddyName", disp.focus_node.name_range } }
-	end
-
-	local last_range = ranges[#ranges][2]
-	vim.api.nvim_win_set_cursor(disp.right.winid, { last_range["start"].line, last_range["start"].character })
-
-	disp.state.leaving_window_for_reorientation = true
-	vim.api.nvim_set_current_win(disp.right.winid)
-
-	local total_lines = disp.focus_node.scope["end"].line - disp.focus_node.scope["start"].line + 1
-
-	if total_lines >= vim.api.nvim_win_get_height(disp.right.winid) then
-		vim.api.nvim_command("normal! zt")
-	else
-		local mid_line = bit.rshift(disp.focus_node.scope["start"].line + disp.focus_node.scope["end"].line, 1)
-		vim.api.nvim_win_set_cursor(disp.right.winid, { mid_line, 0 })
-		vim.api.nvim_command("normal! zz")
-		vim.api.nvim_win_set_cursor(
-		disp.right.winid,
-		{ disp.focus_node.name_range["start"].line, disp.focus_node.name_range["start"].character }
-		)
-	end
-
-	vim.api.nvim_set_current_win(disp.mid.winid)
-	disp.state.leaving_window_for_reorientation = false
-end
-
 local function fill_buffer(buf, node, config)
 	local cursor_pos = vim.api.nvim_win_get_cursor(buf.winid)
 	clear_buffer(buf)
@@ -291,35 +256,43 @@ function display:focus_range()
 	end
 
 	if self.config.source_buffer.follow_node then
-		local last_range = ranges[#ranges][2]
-		vim.api.nvim_win_set_cursor(self.for_win, { last_range["start"].line, last_range["start"].character })
-
-		self.state.leaving_window_for_reorientation = true
-		vim.api.nvim_set_current_win(self.for_win)
-
-		if self.config.source_buffer.reorient == "smart" then
-			local total_lines = self.focus_node.scope["end"].line - self.focus_node.scope["start"].line + 1
-
-			if total_lines >= vim.api.nvim_win_get_height(self.for_win) then
-				vim.api.nvim_command("normal! zt")
-			else
-				local mid_line = bit.rshift(self.focus_node.scope["start"].line + self.focus_node.scope["end"].line, 1)
-				vim.api.nvim_win_set_cursor(self.for_win, { mid_line, 0 })
-				vim.api.nvim_command("normal! zz")
-				vim.api.nvim_win_set_cursor(
-					self.for_win,
-					{ self.focus_node.name_range["start"].line, self.focus_node.name_range["start"].character }
-				)
-			end
-		elseif self.config.source_buffer.reorient == "mid" then
-			vim.api.nvim_command("normal! zz")
-		elseif self.config.source_buffer.reorient == "top" then
-			vim.api.nvim_command("normal! zt")
-		end
-
-		vim.api.nvim_set_current_win(self.mid.winid)
-		self.state.leaving_window_for_reorientation = false
+		self:reorient(self.for_win, self.config.source_buffer.reorient)
 	end
+end
+
+function display:reorient(ro_win, reorient_method)
+	vim.api.nvim_win_set_cursor(ro_win, { self.focus_node.name_range["start"].line, self.focus_node.name_range["start"].character })
+
+	self.state.leaving_window_for_reorientation = true
+	vim.api.nvim_set_current_win(ro_win)
+
+	if reorient_method == "smart" then
+		local total_lines = self.focus_node.scope["end"].line - self.focus_node.scope["start"].line + 1
+
+		if total_lines >= vim.api.nvim_win_get_height(ro_win) then
+			vim.api.nvim_command("normal! zt")
+		else
+			local mid_line = bit.rshift(self.focus_node.scope["start"].line + self.focus_node.scope["end"].line, 1)
+			vim.api.nvim_win_set_cursor(ro_win, { mid_line, 0 })
+			vim.api.nvim_command("normal! zz")
+			vim.api.nvim_win_set_cursor(
+			ro_win,
+			{ self.focus_node.name_range["start"].line, self.focus_node.name_range["start"].character }
+			)
+		end
+	elseif reorient_method == "mid" then
+		vim.api.nvim_command("normal! zz")
+	elseif reorient_method == "top" then
+		vim.api.nvim_command("normal! zt")
+	end
+
+	vim.api.nvim_set_current_win(self.mid.winid)
+	self.state.leaving_window_for_reorientation = false
+end
+
+function display:show_preview()
+	vim.api.nvim_win_set_buf(self.right.winid, self.for_buf)
+	self:reorient(self.right.winid, "smart")
 end
 
 function display:clear_highlights()
@@ -337,7 +310,7 @@ function display:redraw()
 			fill_buffer(self.right, node.children[1], self.config)
 		end
 	else
-		show_preview(self, self.for_buf)
+		self:show_preview()
 	end
 
 	if node.parent.is_root then
