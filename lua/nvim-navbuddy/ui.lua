@@ -169,6 +169,11 @@ function ui.highlight_setup()
 	if not ok then
 		vim.api.nvim_set_hl(0, "NavbuddyFloatBorder", { link = "FloatBorder" })
 	end
+
+	ok, _ = pcall(vim.api.nvim_get_hl_by_name, "NavbuddyNormal", false)
+	if not ok then
+		vim.api.nvim_set_hl(0, "NavbuddyNormal", { link = "NormalFloat" })
+	end
 end
 
 return ui

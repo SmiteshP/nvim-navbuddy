@@ -76,7 +76,7 @@ function display:new(obj)
 		focusable = false,
 		border = config.window.sections.left.border or ui.get_border_chars(config.window.border, "left"),
 		win_options = {
-			winhighlight = "FloatBorder:NavbuddyFloatBorder",
+			winhighlight = "Normal:NavbuddyNormal,FloatBorder:NavbuddyFloatBorder",
 		},
 		buf_options = {
 			modifiable = false,
@@ -87,7 +87,7 @@ function display:new(obj)
 		enter = true,
 		border = config.window.sections.mid.border or ui.get_border_chars(config.window.border, "mid"),
 		win_options = {
-			winhighlight = "FloatBorder:NavbuddyFloatBorder",
+			winhighlight = "Normal:NavbuddyNormal,FloatBorder:NavbuddyFloatBorder",
 			scrolloff = config.window.scrolloff
 		},
 		buf_options = {
@@ -118,7 +118,7 @@ function display:new(obj)
 			text = lsp_name,
 		},
 		win_options = {
-			winhighlight = "FloatBorder:NavbuddyFloatBorder",
+			winhighlight = "Normal:NavbuddyNormal,FloatBorder:NavbuddyFloatBorder",
 			scrolloff = 0,
 		},
 		buf_options = {
@@ -298,6 +298,7 @@ end
 function display:show_preview()
 	vim.api.nvim_win_set_buf(self.right.winid, self.for_buf)
 
+	vim.api.nvim_win_set_option(self.right.winid, 'winhighlight', 'Normal:NavbuddyNormal,FloatBorder:NavbuddyFloatBorder')
 	vim.api.nvim_win_set_option(self.right.winid, "signcolumn", "no")
 	vim.api.nvim_win_set_option(self.right.winid, "foldlevel", 100)
 	vim.api.nvim_win_set_option(self.right.winid, "wrap", false)
