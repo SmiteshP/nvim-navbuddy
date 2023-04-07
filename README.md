@@ -38,23 +38,6 @@ Plug "MunifTanjim/nui.nvim"
 Plug "SmiteshP/nvim-navbuddy"
 ```
 
-## ⚙️ Setup
-
-nvim-navbuddy needs to be attached to lsp servers of the buffer to work. You can pass the
-navbuddy's `attach` function as `on_attach` while setting up the lsp server. You can skip this
-step if you have enabled `auto_attach` option in setup function.
-
-Example:
-```lua
-local navbuddy = require("nvim-navbuddy")
-
-require("lspconfig").clangd.setup {
-    on_attach = function(client, bufnr)
-        navbuddy.attach(client, bufnr)
-    end
-}
-```
-
 ### Lazy Loading
 
 If you want to lazy load navbuddy you need to load it before your Lsp related Stuff.
@@ -70,10 +53,28 @@ return {
             dependencies = {
                 "SmiteshP/nvim-navic",
                 "MunifTanjim/nui.nvim"
-            }
+            },
+            opts = { lsp = { auto_attach = true } }
         }
     },
     -- your lsp config or other stuff
+}
+```
+
+## ⚙️ Setup
+
+nvim-navbuddy needs to be attached to lsp servers of the buffer to work. You can pass the
+navbuddy's `attach` function as `on_attach` while setting up the lsp server. You can skip this
+step if you have enabled `auto_attach` option in setup function.
+
+Example:
+```lua
+local navbuddy = require("nvim-navbuddy")
+
+require("lspconfig").clangd.setup {
+    on_attach = function(client, bufnr)
+        navbuddy.attach(client, bufnr)
+    end
 }
 ```
 
