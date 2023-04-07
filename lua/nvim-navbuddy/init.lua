@@ -88,6 +88,8 @@ local config = {
 
 		["J"] = actions.move_down,
 		["K"] = actions.move_up,
+
+		["s"] = actions.toggle_preview,
 	},
 	lsp = {
 		auto_attach = false,

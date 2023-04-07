@@ -373,4 +373,12 @@ function actions.move_up(display)
 	display:redraw()
 end
 
+function actions.toggle_preview(display)
+	if vim.api.nvim_win_get_buf(display.right.winid) == display.right.bufnr then
+		display:show_preview()
+	else
+		display:hide_preview()
+	end
+end
+
 return actions

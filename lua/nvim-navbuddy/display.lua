@@ -114,7 +114,8 @@ function display:new(obj)
 		},
 		win_options = {
 			winhighlight = "FloatBorder:NavbuddyFloatBorder",
-			scrolloff = 0
+			scrolloff = config.source_buffer.scrolloff,
+			signcolumn = "no"
 		},
 		buf_options = {
 			modifiable = false,
@@ -293,6 +294,20 @@ end
 function display:show_preview()
 	vim.api.nvim_win_set_buf(self.right.winid, self.for_buf)
 	self:reorient(self.right.winid, "smart")
+end
+
+function display:hide_preview()
+	vim.api.nvim_win_set_buf(self.right.winid, self.right.bufnr)
+	local node = self.focus_node
+	if node.children then
+		if node.memory then
+			fill_buffer(self.right, node.children[node.memory], self.config)
+		else
+			fill_buffer(self.right, node.children[1], self.config)
+		end
+	else
+		clear_buffer(self.right)
+	end
 end
 
 function display:clear_highlights()
