@@ -71,6 +71,7 @@ function actions.root(display)
 	end
 
 	while not display.focus_node.parent.is_root do
+		display.focus_node.parent.memory = display.focus_node.index
 		display.focus_node = display.focus_node.parent
 	end
 
