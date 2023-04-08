@@ -92,6 +92,8 @@ local config = {
 		["K"] = actions.move_up,
 
 		["s"] = actions.toggle_preview,
+
+		["t"] = actions.telescope,
 	},
 	lsp = {
 		auto_attach = false,

@@ -382,4 +382,49 @@ function actions.toggle_preview(display)
 	end
 end
 
+function actions.telescope(display)
+	local status_ok, telescope = pcall(require, "telescope")
+	if not status_ok then
+		vim.notify("telescope.nvim not found", vim.log.levels.ERROR)
+		return
+	end
+
+	local pickers = require("telescope.pickers")
+	local finders = require("telescope.finders")
+	local conf = require("telescope.config").values
+	local t_actions = require("telescope.actions")
+	local action_state = require("telescope.actions.state")
+	local previewer = require("telescope.previewers")
+
+	local function fuzzy_search(opts)
+		opts = opts or {}
+		pickers.new(opts, {
+			prompt_title = "Fuzzy Search",
+			finder = finders.new_table({
+				results = display.focus_node.parent.children,
+				entry_maker = function(node)
+					return {
+						value = node,
+						display = node.name,
+						ordinal = node.name,
+					}
+				end
+			}),
+			sorter = conf.generic_sorter(opts),
+			attach_mappings = function(prompt_bufnr, map)
+				t_actions.select_default:replace(function()
+					t_actions.close(prompt_bufnr)
+					local selection = action_state.get_selected_entry()
+					display.focus_node = selection.value
+					display = require("nvim-navbuddy.display"):new(display)
+				end)
+				return true
+			end,
+		}):find()
+	end
+
+	display:close()
+	fuzzy_search()
+end
+
 return actions
