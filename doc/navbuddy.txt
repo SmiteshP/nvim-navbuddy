@@ -9,6 +9,10 @@ Requires :
 *nui.nvim* `https://github.com/MunifTanjim/nui.nvim`
 *Neovim* 0.8 or above
 
+Optional requirements :
+*Comment.nvim* `https://github.com/numToStr/Comment.nvim`
+*telescope.nvim* `https://github.com/nvim-telescope/telescope.nvim`
+
 =============================================================================
 CONTENTS                                                     *navbuddy-components*
 
