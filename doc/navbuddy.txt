@@ -285,6 +285,7 @@ available.
 	`NavbuddyName`  - highlight for name in source buffer
 	`NavbuddyScope` - highlight for scope of context in source buffer
 	`NavbuddyFloatBorder` - Floatborder highlight
+	`NavbuddyNormalFloat` - Float normal highlight
 
 The following highlights are are used to highlight elements in the navbuddy
 window according to their type. If you have "NavicIcons<type>" highlights
