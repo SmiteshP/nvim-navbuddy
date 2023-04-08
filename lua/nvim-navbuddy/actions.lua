@@ -389,113 +389,71 @@ function actions.telescope(display)
 		return
 	end
 
+	local navic = require("nvim-navic.lib")
 	local pickers = require("telescope.pickers")
+	local entry_display = require("telescope.pickers.entry_display")
 	local finders = require("telescope.finders")
 	local conf = require("telescope.config").values
 	local t_actions = require("telescope.actions")
 	local action_state = require("telescope.actions.state")
-	local previewer = require("telescope.previewers")
 
-	local ns = vim.api.nvim_create_namespace("nvim-navbuddy-telescope")
+	local displayer = entry_display.create({
+		separator = " ",
+		items = {
+			{ width = 14 },
+			{ remaining = true },
+		},
+	})
 
-	local function focus_range(node)
-		local ranges = nil
-
-		if vim.deep_equal(node.scope, node.name_range) then
-			ranges = { { "NavbuddyScope", node.scope } }
-		else
-			ranges = { { "NavbuddyScope", node.scope }, { "NavbuddyName", node.name_range } }
-		end
-
-		if display.config.source_buffer.highlight then
-			for _, v in ipairs(ranges) do
-				local highlight, range = unpack(v)
-
-				if range["start"].line == range["end"].line then
-					vim.api.nvim_buf_add_highlight(
-						display.for_buf,
-						ns,
-						highlight,
-						range["start"].line - 1,
-						range["start"].character,
-						range["end"].character
-					)
-				else
-					vim.api.nvim_buf_add_highlight(
-						display.for_buf,
-						ns,
-						highlight,
-						range["start"].line - 1,
-						range["start"].character,
-						-1
-					)
-					vim.api.nvim_buf_add_highlight(
-						display.for_buf,
-						ns,
-						highlight,
-						range["end"].line - 1,
-						0,
-						range["end"].character
-					)
-					for i = range["start"].line, range["end"].line - 2, 1 do
-						vim.api.nvim_buf_add_highlight(display.for_buf, ns, highlight, i, 0, -1)
-					end
-				end
-			end
-		end
+	local function make_display(entry)
+		local node = entry.value
+		local kind = navic.adapt_lsp_num_to_str(node.kind)
+		local kind_hl = "Navbuddy"..kind
+		local name_hl = "NavbuddyNormalFloat"
+		local columns = {
+			{ string.lower(kind), kind_hl },
+			{ node.name, name_hl},
+		}
+		return displayer(columns)
 	end
 
-	local function fuzzy_search(opts)
-		opts = opts or {}
-		pickers.new(opts, {
-			prompt_title = "Fuzzy Search",
-			finder = finders.new_table({
-				results = display.focus_node.parent.children,
-				entry_maker = function(node)
-					return {
-						value = node,
-						display = node.name,
-						ordinal = node.name,
-					}
-				end
-			}),
-			previewer = previewer.new({
-				preview_fn = function(_, entry, status)
-					if vim.api.nvim_win_get_buf(status.preview_win) ~= display.for_buf then
-						vim.api.nvim_win_set_buf(status.preview_win, display.for_buf)
-
-						vim.api.nvim_win_set_option(status.preview_win, "signcolumn", "no")
-						vim.api.nvim_win_set_option(status.preview_win, "foldlevel", 100)
-						vim.api.nvim_win_set_option(status.preview_win, "wrap", false)
-					end
-
-					local node = entry.value
-					vim.api.nvim_win_set_cursor(status.preview_win, {node.name_range["start"].line, 0})
-
-					vim.api.nvim_buf_clear_highlight(display.for_buf, ns, 0, -1)
-					focus_range(node)
-				end
-			}),
-			sorter = conf.generic_sorter(opts),
-			attach_mappings = function(prompt_bufnr, _)
-				t_actions.select_default:replace(function()
-					local selection = action_state.get_selected_entry()
-					display.focus_node = selection.value
-					t_actions.close(prompt_bufnr)
-				end)
-				t_actions.close:enhance({
-					post = function()
-						vim.api.nvim_buf_clear_highlight(display.for_buf, ns, 0, -1)
-						display = require("nvim-navbuddy.display"):new(display)
-					end
-				})
-				return true
-			end,
-		}):find()
+	local function make_entry(node)
+		return {
+			value = node,
+			display = make_display,
+			name = node.name,
+			ordinal = string.lower(navic.adapt_lsp_num_to_str(node.kind)).." "..node.name,
+			lnum = node.name_range["start"].line,
+			col = node.name_range["start"].character,
+			bufnr = display.for_buf,
+			filename = vim.api.nvim_buf_get_name(display.for_buf),
+		}
 	end
 
+	local opts = {}
 	display:close()
-	fuzzy_search()
+	pickers.new(opts, {
+		prompt_title = "Fuzzy Search",
+		finder = finders.new_table({
+			results = display.focus_node.parent.children,
+			entry_maker = make_entry
+		}),
+		sorter = conf.generic_sorter(opts),
+		previewer = conf.qflist_previewer(opts),
+		attach_mappings = function(prompt_bufnr, _)
+			t_actions.select_default:replace(function()
+				local selection = action_state.get_selected_entry()
+				display.focus_node = selection.value
+				t_actions.close(prompt_bufnr)
+			end)
+			t_actions.close:enhance({
+				post = function()
+					display = require("nvim-navbuddy.display"):new(display)
+				end
+			})
+			return true
+		end,
+	}):find()
 end
 
 return actions
