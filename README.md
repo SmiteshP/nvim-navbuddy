@@ -38,6 +38,29 @@ Plug "MunifTanjim/nui.nvim"
 Plug "SmiteshP/nvim-navbuddy"
 ```
 
+### Lazy Loading
+
+If you want to lazy load navbuddy you need to load it before your Lsp related Stuff.
+
+For Example with [Lazy](https://github.com/folke/lazy.nvim) and [lspconfig](https://github.com/neovim/nvim-lspconfig)
+
+```lua
+return {
+    "neovim/nvim-lspconfig",
+    dependencies = {
+        {
+            "SmiteshP/nvim-navbuddy",
+            dependencies = {
+                "SmiteshP/nvim-navic",
+                "MunifTanjim/nui.nvim"
+            },
+            opts = { lsp = { auto_attach = true } }
+        }
+    },
+    -- your lsp config or other stuff
+}
+```
+
 ## ⚙️ Setup
 
 nvim-navbuddy needs to be attached to lsp servers of the buffer to work. You can pass the
