@@ -383,7 +383,7 @@ function actions.toggle_preview(display)
 end
 
 function actions.telescope(display)
-	local status_ok, telescope = pcall(require, "telescope")
+	local status_ok, _ = pcall(require, "telescope")
 	if not status_ok then
 		vim.notify("telescope.nvim not found", vim.log.levels.ERROR)
 		return
@@ -395,6 +395,55 @@ function actions.telescope(display)
 	local t_actions = require("telescope.actions")
 	local action_state = require("telescope.actions.state")
 	local previewer = require("telescope.previewers")
+
+	local ns = vim.api.nvim_create_namespace("nvim-navbuddy-telescope")
+
+	local function focus_range(node)
+		local ranges = nil
+
+		if vim.deep_equal(node.scope, node.name_range) then
+			ranges = { { "NavbuddyScope", node.scope } }
+		else
+			ranges = { { "NavbuddyScope", node.scope }, { "NavbuddyName", node.name_range } }
+		end
+
+		if display.config.source_buffer.highlight then
+			for _, v in ipairs(ranges) do
+				local highlight, range = unpack(v)
+
+				if range["start"].line == range["end"].line then
+					vim.api.nvim_buf_add_highlight(
+						display.for_buf,
+						ns,
+						highlight,
+						range["start"].line - 1,
+						range["start"].character,
+						range["end"].character
+					)
+				else
+					vim.api.nvim_buf_add_highlight(
+						display.for_buf,
+						ns,
+						highlight,
+						range["start"].line - 1,
+						range["start"].character,
+						-1
+					)
+					vim.api.nvim_buf_add_highlight(
+						display.for_buf,
+						ns,
+						highlight,
+						range["end"].line - 1,
+						0,
+						range["end"].character
+					)
+					for i = range["start"].line, range["end"].line - 2, 1 do
+						vim.api.nvim_buf_add_highlight(display.for_buf, ns, highlight, i, 0, -1)
+					end
+				end
+			end
+		end
+	end
 
 	local function fuzzy_search(opts)
 		opts = opts or {}
@@ -410,14 +459,36 @@ function actions.telescope(display)
 					}
 				end
 			}),
+			previewer = previewer.new({
+				preview_fn = function(_, entry, status)
+					if vim.api.nvim_win_get_buf(status.preview_win) ~= display.for_buf then
+						vim.api.nvim_win_set_buf(status.preview_win, display.for_buf)
+
+						vim.api.nvim_win_set_option(status.preview_win, "signcolumn", "no")
+						vim.api.nvim_win_set_option(status.preview_win, "foldlevel", 100)
+						vim.api.nvim_win_set_option(status.preview_win, "wrap", false)
+					end
+
+					local node = entry.value
+					vim.api.nvim_win_set_cursor(status.preview_win, {node.name_range["start"].line, 0})
+
+					vim.api.nvim_buf_clear_highlight(display.for_buf, ns, 0, -1)
+					focus_range(node)
+				end
+			}),
 			sorter = conf.generic_sorter(opts),
-			attach_mappings = function(prompt_bufnr, map)
+			attach_mappings = function(prompt_bufnr, _)
 				t_actions.select_default:replace(function()
-					t_actions.close(prompt_bufnr)
 					local selection = action_state.get_selected_entry()
 					display.focus_node = selection.value
-					display = require("nvim-navbuddy.display"):new(display)
+					t_actions.close(prompt_bufnr)
 				end)
+				t_actions.close:enhance({
+					post = function()
+						vim.api.nvim_buf_clear_highlight(display.for_buf, ns, 0, -1)
+						display = require("nvim-navbuddy.display"):new(display)
+					end
+				})
 				return true
 			end,
 		}):find()
