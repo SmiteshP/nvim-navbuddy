@@ -124,6 +124,7 @@ navbuddy.setup {
             }
         },
         node_markers = {
+            enabled = true,
             leaf = "   ",
             leaf_selected = " 󰗼 ",
             branch = "  ",
