@@ -128,9 +128,9 @@ navbuddy.setup {
     node_markers = {
         enabled = true,
         icons = {
-            leaf = "   ",
+            leaf = "  ",
             leaf_selected = " 󰗼 ",
-            branch = "  ",
+            branch = " ",
         },
     },
     icons = {
