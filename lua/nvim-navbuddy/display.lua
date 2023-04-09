@@ -53,12 +53,12 @@ local function fill_buffer(buf, node, config)
 			0,
 			-1
 		)
-		if config.window.node_markers.enabled then
+		if config.node_markers.enabled then
 			vim.api.nvim_buf_set_extmark(buf.bufnr, ns, i - 1, #lines[i], {
 				virt_text = { {
-					child_node.children ~= nil and config.window.node_markers.branch
-						or i == cursor_pos[1] and config.window.node_markers.leaf_selected
-						or config.window.node_markers.leaf,
+					child_node.children ~= nil and config.node_markers.icons.branch
+						or i == cursor_pos[1] and config.node_markers.icons.leaf_selected
+						or config.node_markers.icons.leaf,
 					i == cursor_pos[1] and { "NavbuddyCursorLine", hl_group } or hl_group,
 				} },
 				virt_text_pos = "right_align",

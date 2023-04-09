@@ -83,6 +83,7 @@ require("lspconfig").clangd.setup {
 Use `setup` to override any of the default options
 
 * `icons` : Indicate the type of symbol captured. Default icons assume you have nerd-fonts.
+* `node_markers` : Indicate whether a node is a leaf or branch node. Default icons assume you have nerd-fonts.
 * `window` : Set options related to window's "border", "size", "position".
 * `use_default_mappings`: If set to false, only mappings set by user are set. Else default mappings are used for keys that are not set by user.
 * `mappings` : Actions to be triggered for specified keybindings. If you wish to set custom keybindings, you will have to set all the keybindings.
@@ -123,8 +124,10 @@ navbuddy.setup {
                                    -- Options: "leaf", "always" or "never"
             }
         },
-        node_markers = {
-            enabled = true,
+    },
+    node_markers = {
+        enabled = true,
+        icons = {
             leaf = "   ",
             leaf_selected = " 󰗼 ",
             branch = "  ",

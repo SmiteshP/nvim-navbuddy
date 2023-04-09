@@ -22,8 +22,10 @@ local config = {
 				preview = "leaf",
 			},
 		},
-		node_markers = {
-			enabled = true,
+	},
+	node_markers = {
+		enabled = true,
+		icons = {
 			leaf = "   ",
 			leaf_selected = " 󰗼 ",
 			branch = "  ",
