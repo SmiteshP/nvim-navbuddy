@@ -122,7 +122,12 @@ navbuddy.setup {
                 preview = "leaf",  -- Right section can show previews too.
                                    -- Options: "leaf", "always" or "never"
             }
-        }
+        },
+        node_markers = {
+            leaf = "   ",
+            leaf_selected = " 󰗼 ",
+            branch = "  ",
+        },
     },
     icons = {
         File          = " ",
