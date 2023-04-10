@@ -69,7 +69,7 @@ function ui.get_border_chars(style, section)
 			double  = "╩",
 			solid   = "▙",
 		},
-		blank = " ",
+		blank = "",
 	}
 
 	local border_chars_map = {

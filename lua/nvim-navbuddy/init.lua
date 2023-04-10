@@ -23,6 +23,14 @@ local config = {
 			},
 		},
 	},
+	node_markers = {
+		enabled = true,
+		icons = {
+			leaf = "  ",
+			leaf_selected = " 󰗼 ",
+			branch = " ",
+		},
+	},
 	icons = {
 		[1] = " ", -- File
 		[2] = " ", -- Module
@@ -299,6 +307,10 @@ function M.setup(user_config)
 			config.window.sections.left.border = config.window.sections.left.border or "none"
 			config.window.sections.mid.border = config.window.sections.mid.border or "none"
 			config.window.sections.right.border = config.window.sections.right.border or "none"
+		end
+
+		if user_config.node_markers ~= nil then
+			config.node_markers = vim.tbl_deep_extend("keep", user_config.node_markers, config.node_markers)
 		end
 
 		if user_config.icons ~= nil then
