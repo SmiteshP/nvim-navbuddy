@@ -27,7 +27,7 @@ local config = {
 		enabled = true,
 		icons = {
 			leaf = "  ",
-			leaf_selected = " 󰗼 ",
+			leaf_selected = " → ",
 			branch = " ",
 		},
 	},
