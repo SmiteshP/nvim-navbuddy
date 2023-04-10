@@ -102,6 +102,7 @@ local config = {
 		["s"] = actions.toggle_preview,
 
 		["t"] = actions.telescope({
+			layout_strategy = "horizontal",
 			layout_config = {
 				height = 0.60,
 				width = 0.60,
