@@ -61,13 +61,17 @@ Use |navbuddy.setup| to override any of the default options
 
 	icons: table
 		Icons to show for captured symbols. Default icons assume that you
-		have nerd-font.
+		have nerd-fonts.
 
 	window: table
 		Set options related to window's "border", "size", "position".
 
+	node_markers: table
+		Indicate whether a node is a leaf or branch node. Default icons assume 
+		you have nerd-fonts.
+
 	use_default_mappings: boolean
-		If set to false, only mappings set by user are set. Else default mappings 
+		If set to false, only mappings set by user are set. Else default mappings
 		are used for keys that are not set by user.
 
 	mappings: table
@@ -126,6 +130,14 @@ Defaults >
 									   -- Options: "leaf", "always" or "never"
 				}
 			}
+		},
+		node_markers = {
+			enabled = true,
+			icons = {
+				leaf = "  ",
+				leaf_selected = " → ",
+				branch = " ",
+			},
 		},
 		icons = {
 			[1] = " ", -- File

@@ -133,7 +133,7 @@ navbuddy.setup {
         enabled = true,
         icons = {
             leaf = "  ",
-            leaf_selected = " 󰗼 ",
+            leaf_selected = " → ",
             branch = " ",
         },
     },
