@@ -100,6 +100,15 @@ local config = {
 		["K"] = actions.move_up,
 
 		["s"] = actions.toggle_preview,
+
+		["t"] = actions.telescope({
+			layout_config = {
+				height = 0.60,
+				width = 0.60,
+				prompt_position = "top",
+				preview_width = 0.50
+			},
+		}),
 	},
 	lsp = {
 		auto_attach = false,

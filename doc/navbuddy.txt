@@ -9,6 +9,10 @@ Requires :
 *nui.nvim* `https://github.com/MunifTanjim/nui.nvim`
 *Neovim* 0.8 or above
 
+Optional requirements :
+*Comment.nvim* `https://github.com/numToStr/Comment.nvim`
+*telescope.nvim* `https://github.com/nvim-telescope/telescope.nvim`
+
 =============================================================================
 CONTENTS                                                     *navbuddy-components*
 
@@ -190,6 +194,18 @@ Defaults >
 
 			["<enter>"] = actions.select,     -- Goto selected symbol
 			["o"] = actions.select,
+
+			["J"] = actions.move_down,        -- Move focused node down
+			["K"] = actions.move_up,          -- Move focused node up
+
+			["t"] = actions.telescope({       -- Fuzzy finder at current level.
+				layout_config = {			  -- All options that can be
+					height = 0.60,            -- passed to telescope.nvim's
+					width = 0.60,			  -- default can be passed here.
+					prompt_position = "top",
+					preview_width = 0.50
+				},
+			})
 		},
 		lsp = {
 			auto_attach = false,  -- If set to true, you don't need to manually use attach function
@@ -208,73 +224,78 @@ Actions                                                         *navbuddy-action
 
 |nvim-navbuddy| provides the following actions for the user.
 
-*actions.close* (opts)
+*actions.close* ()
 	Close the Navbuddy window and return cursor to original location.
 
-*actions.next_sibling* (opts)
+*actions.next_sibling* ()
 	Move to next_sibling, below current node, in Navbuddy window.
 
-*actions.previous_sibling* (opts)
+*actions.previous_sibling* ()
 	Move to previous_sibling, above current node, in Navbuddy window.
 
-*actions.parent* (opts)
+*actions.parent* ()
 	Move to parent of current, left of current node, in Navbuddy window.
 
-*actions.children* (opts)
+*actions.children* ()
 	Move to children of current, right of current node, in Navbuddy window.
 
-*actions.root* (opts)
+*actions.root* ()
 	Move to root node, the first node left of current node, in Navbuddy window.
 
-*actions.select* (opts)
+*actions.select* ()
 	Goto currently focus node.
 
-*actions.visual_name* (opts)
+*actions.visual_name* ()
 	Visual select the name of current node.
 
-*actions.visual_scope* (opts)
+*actions.visual_scope* ()
 	Visual select the scope of current node.
 
-*actions.yank_name* (opts)
+*actions.yank_name* ()
 	Yank the name of current node.
 
-*actions.yank_scope* (opts)
+*actions.yank_scope* ()
 	Yank the scope of current node.
 
-*actions.insert_name* (opts)
+*actions.insert_name* ()
 	Start insert at begin of name.
 
-*actions.insert_scope* (opts)
+*actions.insert_scope* ()
 	Start insert at begin of scope.
 
-*actions.append_name* (opts)
+*actions.append_name* ()
 	Start insert at end of name.
 
-*actions.append_scope* (opts)
+*actions.append_scope* ()
 	Start insert at end of scope.
 
-*actions.rename* (opts)
+*actions.rename* ()
 	Trigger lsp rename for current node.
 
-*actions.delete* (opts)
+*actions.delete* ()
 	Delete currently focused scope.
 
-*actions.fold_create* (opts)
+*actions.fold_create* ()
 	Create fold for current scope. Requires fold methos to be "manual".
 
-*actions.fold_delete* (opts)
+*actions.fold_delete* ()
 	Delete fold for current scope. Requires fold methos to be "manual".
 
-*actions.comment* (opts)
+*actions.comment* ()
 	Comment selected scope. Require Comment.nvim plugin to be installed.
 
-*actions.move_down* (opts)
+*actions.move_down* ()
 	Move currently focued node down. Copies entire lines and works only in case
 	there are no overlapping lines between current node and next node.
 
-*actions.move_up* (opts)
+*actions.move_up* ()
 	Move currently focued node up. Copies entire lines and works only in case
 	there are no overlapping lines between current node and previous node.
+
+*actions.telescope* (opts)
+	Open Fuzzy finder with telescope to search sibling nodes on current level.
+	Can be customized during setup by passing opts table, all configuration
+	passed to telescope.nvim's default option can be passed here.
 
 =============================================================================
 Highlight                                                    *navbuddy-highlights*

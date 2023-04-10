@@ -24,7 +24,9 @@ use {
     requires = {
         "neovim/nvim-lspconfig",
         "SmiteshP/nvim-navic",
-        "MunifTanjim/nui.nvim"
+        "MunifTanjim/nui.nvim",
+        "numToStr/Comment.nvim",        -- Optional
+        "nvim-telescope/telescope.nvim" -- Optional
     }
 }
 ```
@@ -35,6 +37,8 @@ use {
 Plug "neovim/nvim-lspconfig"
 Plug "SmiteshP/nvim-navic"
 Plug "MunifTanjim/nui.nvim"
+Plug "numToStr/Comment.nvim",        " Optional
+Plug "nvim-telescope/telescope.nvim" " Optional
 Plug "SmiteshP/nvim-navbuddy"
 ```
 
@@ -202,6 +206,15 @@ navbuddy.setup {
 
         ["J"] = actions.move_down,        -- Move focused node down
         ["K"] = actions.move_up,          -- Move focused node up
+
+        ["t"] = actions.telescope({       -- Fuzzy finder at current level.
+            layout_config = {             -- All options that can be
+                height = 0.60,            -- passed to telescope.nvim's
+                width = 0.60,             -- default can be passed here.
+                prompt_position = "top",
+                preview_width = 0.50
+            },
+        })
     },
     lsp = {
         auto_attach = false,   -- If set to true, you don't need to manually use attach function
