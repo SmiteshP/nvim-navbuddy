@@ -309,6 +309,10 @@ function M.setup(user_config)
 			config.window.sections.right.border = config.window.sections.right.border or "none"
 		end
 
+		if user_config.node_markers ~= nil then
+			config.node_markers = vim.tbl_deep_extend("keep", user_config.node_markers, config.node_markers)
+		end
+
 		if user_config.icons ~= nil then
 			for k, v in pairs(user_config.icons) do
 				if navic.adapt_lsp_str_to_num(k) then
