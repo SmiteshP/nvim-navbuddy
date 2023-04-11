@@ -214,6 +214,7 @@ navbuddy.setup {
                 prompt_position = "top",
                 preview_width = 0.50
             },
+            layout_strategy = "horizontal"
         })
     },
     lsp = {
