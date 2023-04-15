@@ -200,7 +200,9 @@ local function request(for_buf, handler)
 		end, client)
 	end
 
-	if #navbuddy_attached_clients[for_buf] == 1 then
+	if navbuddy_attached_clients[for_buf] == nil then
+		vim.notify("No lsp servers attached", vim.log.levels.ERROR)
+	elseif #navbuddy_attached_clients[for_buf] == 1 then
 		make_request(navbuddy_attached_clients[for_buf][1])
 	elseif config.lsp.preference ~= nil then
 		local found = false
