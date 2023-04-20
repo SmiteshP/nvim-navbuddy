@@ -233,7 +233,7 @@ navbuddy.setup {
     folding = {
         foldmethod_auto_set_manual = true,   -- Auto switch to manual mode
         leading_spaces = 2,                  -- Add leading space to the foldmarker comment string
-  },
+    },
 }
 ```
 
