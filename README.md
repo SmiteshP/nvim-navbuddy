@@ -98,6 +98,9 @@ Use `setup` to override any of the default options
     * `follow_node` : Keep the current node in focus on the source buffer
     * `highlight` : Highlight the currently focused node
     * reorient: Reorient buffer after changing nodes. options are "smart", "top", "mid" or "none"
+* `folding` :
+    * `foldmethod_auto_set_manual` : Auto switch to manual mode
+    * `leading_spaces` : Add leading space to the foldmarker comment string
 
 ```lua
 local navbuddy = require("nvim-navbuddy")
@@ -226,7 +229,11 @@ navbuddy.setup {
         highlight = true,      -- Highlight the currently focused node
         reorient = "smart",    -- "smart", "top", "mid" or "none"
         scrolloff = nil        -- scrolloff value when navbuddy is open
-    }
+    },
+    folding = {
+        foldmethod_auto_set_manual = true,   -- Auto switch to manual mode
+        leading_spaces = 2,                  -- Add leading space to the foldmarker comment string
+  },
 }
 ```
 
