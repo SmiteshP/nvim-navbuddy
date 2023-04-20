@@ -91,7 +91,7 @@ Use |navbuddy.setup| to override any of the default options
 			the preference list is { "clangd", "pyright" }. Then clangd will
 			be prefered.
 
-	source_buffer:
+	source_buffer: table
 		follow_node: boolean
 			Move the source buffer such that focused node is visible.
 		highlight: boolean
@@ -99,6 +99,12 @@ Use |navbuddy.setup| to override any of the default options
 		reorient: string
 			Reorient buffer after changing nodes. options are "smart", "top",
 			"mid" or "none"
+
+        folding: table
+                foldmethod_auto_set_manual: bool
+		        Auto switch to manual mode
+                leading_spaces: number
+		        Add leading space to the foldmarker comment string
 
 Defaults >
 
@@ -229,7 +235,11 @@ Defaults >
 			highlight = true,     -- Highlight the currently focused node
 			reorient = "smart",   -- "smart", "top", "mid" or "none"
 			scrolloff = nil       -- scrolloff value when navbuddy is open
-		}
+		},
+                folding = {
+                        foldmethod_auto_set_manual = true,   -- Auto switch to manual mode
+                        leading_spaces = 2,                  -- Add leading space to the foldmarker comment string
+                },
 	}
 <
 =============================================================================
