@@ -343,19 +343,21 @@ function M.setup(user_config)
 			config.source_buffer = vim.tbl_deep_extend("keep", user_config.source_buffer, config.source_buffer)
 		end
 
-		if
-			user_config.folding.foldmethod_auto_set_manual ~= nil
-			and type(user_config.folding.foldmethod_auto_set_manual) == "boolean"
-		then
-			config.folding.foldmethod_auto_set_manual = user_config.folding.foldmethod_auto_set_manual
-		end
+		if user_config.folding ~= nil then
+			if
+				user_config.folding.foldmethod_auto_set_manual ~= nil
+				and type(user_config.folding.foldmethod_auto_set_manual) == "boolean"
+			then
+				config.folding.foldmethod_auto_set_manual = user_config.folding.foldmethod_auto_set_manual
+			end
 
-		if
-			user_config.folding.leading_spaces ~= nil
-			and type(user_config.folding.leading_spaces) == "number"
-			and user_config.folding.leading_spaces >= 0
-		then
-			config.folding.leading_spaces = user_config.folding.leading_spaces
+			if
+				user_config.folding.leading_spaces ~= nil
+				and type(user_config.folding.leading_spaces) == "number"
+				and user_config.folding.leading_spaces >= 0
+			then
+				config.folding.leading_spaces = user_config.folding.leading_spaces
+			end
 		end
 	end
 
