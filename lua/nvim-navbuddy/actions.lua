@@ -1,6 +1,8 @@
 local USER_FOLDMETHOD = vim.o.foldmethod
 local USER_FOLDMARKER = vim.o.foldmarker
 local USER_FOLDMARKER_O, USER_FOLDMARKER_C = USER_FOLDMARKER:match("([^,]+),([^,]+)")
+local CMD_FOLD_N_ZF = "normal! zf"
+local CMD_FOLD_N_ZD = "normal! zd"
 local api = vim.api
 
 local actions = {}
@@ -271,7 +273,7 @@ local apply_comment_fold_marker = function(display, cmd)
 	api.nvim_win_set_cursor(display.for_win, { start_line, display.focus_node.scope["start"].character })
 
 	if
-		cmd == "normal! zf"
+		cmd == CMD_FOLD_N_ZF
 		and (api.nvim_get_current_line():find(USER_FOLDMARKER_O) or api.nvim_get_current_line():find(USER_FOLDMARKER_C))
 	then
 		mid_win_id(display)
@@ -291,7 +293,7 @@ local apply_comment_fold_marker = function(display, cmd)
 		trailing_spaces = display.config.folding.leading_spaces + 2
 	end
 
-	if cmd == "normal! zd" then
+	if cmd == CMD_FOLD_N_ZD then
 		api.nvim_set_current_win(display.for_win)
 		api.nvim_win_set_cursor(display.for_win, { start_line, 0 })
 		clean_trailing_space(api.nvim_get_current_line(), trailing_spaces)
@@ -306,7 +308,7 @@ function actions.fold_create(display)
 	if is_manual_foldmethod(display) == false then
 		return
 	end
-	apply_comment_fold_marker(display, "normal! zf")
+	apply_comment_fold_marker(display, CMD_FOLD_N_ZF)
 	reinit_foldmethod()
 end
 
@@ -314,7 +316,7 @@ function actions.fold_delete(display)
 	if is_manual_foldmethod(display) == false then
 		return
 	end
-	start_line, end_line = apply_comment_fold_marker(display, "normal! zd")
+	apply_comment_fold_marker(display, CMD_FOLD_N_ZD)
 	reinit_foldmethod()
 end
 
