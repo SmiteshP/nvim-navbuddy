@@ -64,36 +64,50 @@ local config = {
 	mappings = {
 		["<esc>"] = actions.close,
 		["q"] = actions.close,
+
 		["j"] = actions.next_sibling,
 		["k"] = actions.previous_sibling,
+
 		["h"] = actions.parent,
 		["l"] = actions.children,
 		["0"] = actions.root,
+
 		["v"] = actions.visual_name,
 		["V"] = actions.visual_scope,
+
 		["y"] = actions.yank_name,
 		["Y"] = actions.yank_scope,
+
 		["i"] = actions.insert_name,
 		["I"] = actions.insert_scope,
+
 		["a"] = actions.append_name,
 		["A"] = actions.append_scope,
+
 		["r"] = actions.rename,
+
 		["d"] = actions.delete,
+
 		["f"] = actions.fold_create,
 		["F"] = actions.fold_delete,
+
 		["c"] = actions.comment,
+
 		["<enter>"] = actions.select,
 		["o"] = actions.select,
+
 		["J"] = actions.move_down,
 		["K"] = actions.move_up,
+
 		["s"] = actions.toggle_preview,
+
 		["t"] = actions.telescope({
 			layout_strategy = "horizontal",
 			layout_config = {
 				height = 0.60,
 				width = 0.60,
 				prompt_position = "top",
-				preview_width = 0.50,
+				preview_width = 0.50
 			},
 		}),
 	},
@@ -105,11 +119,11 @@ local config = {
 		follow_node = true,
 		highlight = true,
 		reorient = "smart",
-		scrolloff = nil,
+		scrolloff = nil
 	},
 	folding = {
 		foldmethod_auto_set_manual = true,
-		leading_spaces = 2, -- to avoid the monstruosity err msg "at least two spaces before inline comment"
+		leading_spaces = 2,
 	},
 }
 
