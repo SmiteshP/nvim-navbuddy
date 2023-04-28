@@ -86,14 +86,25 @@ function display:new(obj)
 	self.__index = self
 
 	local config = obj.config
+	obj.winblend = config.window.winblend
+
+	local win_options = {}
+	if obj.winblend ~= nil then
+		win_options = {
+			winblend = obj.winblend,
+		}
+	else
+		win_options = {
+			winhighlight = "Normal:NavbuddyNormalFloat,FloatBorder:NavbuddyFloatBorder",
+		}
+	end
+
 
 	-- NUI elements
 	local left_popup = nui_popup({
 		focusable = false,
 		border = config.window.sections.left.border or ui.get_border_chars(config.window.border, "left"),
-		win_options = {
-			winhighlight = "Normal:NavbuddyNormalFloat,FloatBorder:NavbuddyFloatBorder",
-		},
+		win_options = win_options,
 		buf_options = {
 			modifiable = false,
 		},
@@ -102,10 +113,7 @@ function display:new(obj)
 	local mid_popup = nui_popup({
 		enter = true,
 		border = config.window.sections.mid.border or ui.get_border_chars(config.window.border, "mid"),
-		win_options = {
-			winhighlight = "Normal:NavbuddyNormalFloat,FloatBorder:NavbuddyFloatBorder",
-			scrolloff = config.window.scrolloff
-		},
+		win_options = win_options,
 		buf_options = {
 			modifiable = false,
 		},
@@ -133,10 +141,9 @@ function display:new(obj)
 			style = config.window.sections.right.border or ui.get_border_chars(config.window.border, "right"),
 			text = lsp_name,
 		},
-		win_options = {
-			winhighlight = "Normal:NavbuddyNormalFloat,FloatBorder:NavbuddyFloatBorder",
+		win_options = vim.tbl_deep_extend("force", {
 			scrolloff = 0,
-		},
+		}, win_options),
 		buf_options = {
 			modifiable = false,
 		},
@@ -333,10 +340,16 @@ end
 function display:show_preview()
 	vim.api.nvim_win_set_buf(self.right.winid, self.for_buf)
 
-	vim.api.nvim_win_set_option(self.right.winid, 'winhighlight', 'Normal:NavbuddyNormalFloat,FloatBorder:NavbuddyFloatBorder')
 	vim.api.nvim_win_set_option(self.right.winid, "signcolumn", "no")
 	vim.api.nvim_win_set_option(self.right.winid, "foldlevel", 100)
 	vim.api.nvim_win_set_option(self.right.winid, "wrap", false)
+
+	if self.winblend then
+		vim.api.nvim_win_set_option(self.right.winid, "winblend", self.winblend)
+	else
+		vim.api.nvim_win_set_option(self.right.winid, 'winhighlight',
+			'Normal:NavbuddyNormalFloat,FloatBorder:NavbuddyFloatBorder')
+	end
 
 	self:reorient(self.right.winid, "smart")
 end

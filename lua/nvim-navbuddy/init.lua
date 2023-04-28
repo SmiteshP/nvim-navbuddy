@@ -11,6 +11,7 @@ local config = {
 		size = "60%",
 		position = "50%",
 		scrolloff = nil,
+		winblend = nil,
 		sections = {
 			left = {
 				size = "20%",
