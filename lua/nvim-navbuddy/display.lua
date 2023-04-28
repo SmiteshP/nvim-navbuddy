@@ -237,7 +237,7 @@ function display:new(obj)
 	-- Mappings
 	for i, v in pairs(config.mappings) do
 		obj.mid:map("n", i, function()
-			v(obj)
+			v.callback(obj)
 		end)
 	end
 
