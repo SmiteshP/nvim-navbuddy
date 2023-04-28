@@ -163,7 +163,7 @@ function display:new(obj)
 		leaving_window_for_action = false,
 		leaving_window_for_reorientation = false,
 		closed = false,
-		user_gui_cursor = nil,
+		-- user_gui_cursor = nil,
 		source_buffer_scrolloff = nil
 	}
 
@@ -171,6 +171,9 @@ function display:new(obj)
 	vim.api.nvim_buf_set_option(obj.mid.bufnr, "filetype", "Navbuddy")
 
 	-- Hidden cursor
+	if obj.state.user_gui_cursor == nil then
+		obj.state.user_gui_cursor = vim.api.nvim_get_option("guicursor")
+	end
 	obj.state.user_gui_cursor = vim.api.nvim_get_option("guicursor")
 	if obj.state.user_gui_cursor ~= "" then
 		vim.api.nvim_set_option("guicursor", "a:NavbuddyCursor")
@@ -211,6 +214,22 @@ function display:new(obj)
 				and obj.state.closed == false
 			then
 				obj:close()
+			end
+		end,
+	})
+	vim.api.nvim_create_autocmd("CmdlineEnter", {
+		group = augroup,
+		buffer = obj.mid.bufnr,
+		callback = function()
+			vim.api.nvim_set_option("guicursor", obj.state.user_gui_cursor)
+		end
+	})
+	vim.api.nvim_create_autocmd("CmdlineLeave", {
+		group = augroup,
+		buffer = obj.mid.bufnr,
+		callback = function()
+			if obj.state.user_gui_cursor ~= "" then
+				vim.api.nvim_set_option("guicursor", "a:NavbuddyCursor")
 			end
 		end,
 	})
