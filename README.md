@@ -90,7 +90,7 @@ Use `setup` to override any of the default options
 * `node_markers` : Indicate whether a node is a leaf or branch node. Default icons assume you have nerd-fonts.
 * `window` : Set options related to window's "border", "size", "position".
 * `use_default_mappings`: If set to false, only mappings set by user are set. Else default mappings are used for keys that are not set by user.
-* `mappings` : Actions to be triggered for specified keybindings. If you wish to set custom keybindings, you will have to set all the keybindings.
+* `mappings` : Actions to be triggered for specified keybindings. For each keybinding it takes a table of format { callback = <function_to_be_called>, description = "string"}. The callback function takes the "display" object as an argument.
 * `lsp` :
     * `auto_attach` : Enable to have Navbuddy automatically attach to every LSP for current buffer. Its disabled by default.
     * `preference` : Table ranking lsp_servers. Lower the index, higher the priority of the server. If there are more than one server attached to a buffer, navbuddy will refer to this list to make a decision on which one to use. for example - In case a buffer is attached to clangd and ccls both and the preference list is `{ "clangd", "pyright" }`. Then clangd will be prefered.
@@ -165,57 +165,59 @@ navbuddy.setup {
         Operator      = " ",
         TypeParameter = " ",
     },
-    use_default_mappings = true,          -- If set to false, only mappings set
-                                          -- by user are set. Else default
-                                          -- mappings are used for keys
-                                          -- that are not set by user
+    use_default_mappings = true,            -- If set to false, only mappings set
+                                            -- by user are set. Else default
+                                            -- mappings are used for keys
+                                            -- that are not set by user
     mappings = {
-        ["<esc>"] = actions.close,        -- Close and cursor to original location
-        ["q"] = actions.close,
+        ["<esc>"] = actions.close(),        -- Close and cursor to original location
+        ["q"] = actions.close(),
 
-        ["j"] = actions.next_sibling,     -- down
-        ["k"] = actions.previous_sibling, -- up
+        ["j"] = actions.next_sibling(),     -- down
+        ["k"] = actions.previous_sibling(), -- up
 
-        ["h"] = actions.parent,           -- Move to left panel
-        ["l"] = actions.children,         -- Move to right panel
-        ["0"] = actions.root,             -- Move to first panel
+        ["h"] = actions.parent(),           -- Move to left panel
+        ["l"] = actions.children(),         -- Move to right panel
+        ["0"] = actions.root(),             -- Move to first panel
 
-        ["v"] = actions.visual_name,      -- Visual selection of name
-        ["V"] = actions.visual_scope,     -- Visual selection of scope
+        ["v"] = actions.visual_name(),      -- Visual selection of name
+        ["V"] = actions.visual_scope(),     -- Visual selection of scope
 
-        ["y"] = actions.yank_name,        -- Yank the name to system clipboard "+
-        ["Y"] = actions.yank_scope,       -- Yank the scope to system clipboard "+
+        ["y"] = actions.yank_name(),        -- Yank the name to system clipboard "+
+        ["Y"] = actions.yank_scope(),       -- Yank the scope to system clipboard "+
 
-        ["i"] = actions.insert_name,      -- Insert at start of name
-        ["I"] = actions.insert_scope,     -- Insert at start of scope
+        ["i"] = actions.insert_name(),      -- Insert at start of name
+        ["I"] = actions.insert_scope(),     -- Insert at start of scope
 
-        ["a"] = actions.append_name,      -- Insert at end of name
-        ["A"] = actions.append_scope,     -- Insert at end of scope
+        ["a"] = actions.append_name(),      -- Insert at end of name
+        ["A"] = actions.append_scope(),     -- Insert at end of scope
 
-        ["r"] = actions.rename,           -- Rename currently focused symbol
+        ["r"] = actions.rename(),           -- Rename currently focused symbol
 
-        ["d"] = actions.delete,           -- Delete scope
+        ["d"] = actions.delete(),           -- Delete scope
 
-        ["f"] = actions.fold_create,      -- Create fold of current scope
-        ["F"] = actions.fold_delete,      -- Delete fold of current scope
+        ["f"] = actions.fold_create(),      -- Create fold of current scope
+        ["F"] = actions.fold_delete(),      -- Delete fold of current scope
 
-        ["c"] = actions.comment,          -- Comment out current scope
+        ["c"] = actions.comment(),          -- Comment out current scope
 
-        ["<enter>"] = actions.select,     -- Goto selected symbol
-        ["o"] = actions.select,
+        ["<enter>"] = actions.select(),     -- Goto selected symbol
+        ["o"] = actions.select(),
 
-        ["J"] = actions.move_down,        -- Move focused node down
-        ["K"] = actions.move_up,          -- Move focused node up
+        ["J"] = actions.move_down(),        -- Move focused node down
+        ["K"] = actions.move_up(),          -- Move focused node up
 
-        ["t"] = actions.telescope({       -- Fuzzy finder at current level.
-            layout_config = {             -- All options that can be
-                height = 0.60,            -- passed to telescope.nvim's
-                width = 0.60,             -- default can be passed here.
+        ["t"] = actions.telescope({         -- Fuzzy finder at current level.
+            layout_config = {               -- All options that can be
+                height = 0.60,              -- passed to telescope.nvim's
+                width = 0.60,               -- default can be passed here.
                 prompt_position = "top",
                 preview_width = 0.50
             },
             layout_strategy = "horizontal"
-        })
+        }),
+
+        ["g?"] = actions.help(),            -- Open mappings help window
     },
     lsp = {
         auto_attach = false,   -- If set to true, you don't need to manually use attach function
