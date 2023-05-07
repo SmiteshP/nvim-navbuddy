@@ -237,10 +237,10 @@ function display:new(obj)
 	-- Mappings
 	for i, v in pairs(config.mappings) do
 		obj.mid:map("n", i,
-        function()
+		function()
 			v(obj)
 		end,
-        { nowait=true })
+		{ nowait=true })
 	end
 
 	-- Display
