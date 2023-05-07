@@ -661,11 +661,12 @@ function actions.help()
 
 		local lines = {}
 		for k, v in pairs(display.config.mappings) do
-			local text = "  " .. k .. string.rep(" ", max_keybinding_len - #k + 1) .. v.description
+			local text = "  " .. k .. string.rep(" ", max_keybinding_len - #k) .. " | " .. v.description
 			table.insert(lines, text)
 		end
 		table.sort(lines)
-		table.insert(lines, 1, " Navbuddy Mappings - press 'q' to exit")
+		table.insert(lines, 1, " Navbuddy Mappings" .. string.rep(" ", math.max(1, vim.api.nvim_win_get_width(help_popup.winid) - 18*2)) .. "press 'q' to exit ")
+		table.insert(lines, 2, string.rep("-", vim.api.nvim_win_get_width(help_popup.winid)))
 
 		vim.api.nvim_buf_set_option(help_popup.bufnr, "modifiable", true)
 		vim.api.nvim_buf_set_lines(help_popup.bufnr, 0, -1, false, lines)
