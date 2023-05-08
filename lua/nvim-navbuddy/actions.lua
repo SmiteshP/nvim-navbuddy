@@ -1,3 +1,5 @@
+local USER_FOLDMETHOD = vim.o.foldmethod  -- get user foldmethod preference to restore it
+
 local actions = {}
 
 function actions.close(display)
@@ -227,9 +229,34 @@ function actions.delete(display)
 	vim.api.nvim_command("normal! d")
 end
 
-function actions.fold_create(display)
-	if vim.o.foldmethod ~= "manual" then
+local is_manual_foldmethod = function(display)
+	if display.config.folding.foldmethod_auto_set_manual == true then
+		vim.o.foldmethod = "manual"
+		return true
+	end
+	if USER_FOLDMETHOD ~= "manual" then
 		vim.notify("Fold create action works only when foldmethod is 'manual'", vim.log.levels.ERROR)
+		return false
+	end
+	return true
+end
+
+local reinit_foldmethod = function()
+	vim.o.foldmethod = USER_FOLDMETHOD
+end
+
+local comment_trailing_space = function(display)
+	vim.api.nvim_set_current_line(vim.api.nvim_get_current_line() .. string.rep(" ", display.config.folding.leading_spaces))
+end
+
+local clean_trailing_space = function()
+	vim.api.nvim_set_current_line(""..vim.api.nvim_get_current_line():gsub("%s+$", ""))
+end
+
+function actions.fold_create(display)
+	local foldmarker_o, foldmarker_c = vim.o.foldmarker:match("([^,]+),([^,]+)")
+
+	if is_manual_foldmethod(display) == false then
 		return
 	end
 
@@ -239,19 +266,33 @@ function actions.fold_create(display)
 		display.for_win,
 		{ display.focus_node.scope["start"].line, display.focus_node.scope["start"].character }
 	)
+
+	-- avoid duplicate fold marker comment string
+	if vim.api.nvim_get_current_line():find(foldmarker_o) or vim.api.nvim_get_current_line():find(foldmarker_c) then
+		vim.api.nvim_set_current_win(display.mid.winid)
+		display.state.leaving_window_for_action = false
+		return
+	end
+
+	comment_trailing_space(display)
 	vim.api.nvim_command("normal! v")
 	vim.api.nvim_win_set_cursor(
 		display.for_win,
 		{ display.focus_node.scope["end"].line, display.focus_node.scope["end"].character - 1 }
 	)
+	comment_trailing_space(display)
 	vim.api.nvim_command("normal! zf")
 	vim.api.nvim_set_current_win(display.mid.winid)
 	display.state.leaving_window_for_action = false
+
+	reinit_foldmethod()
 end
 
 function actions.fold_delete(display)
-	if vim.o.foldmethod ~= "manual" then
-		vim.notify("Fold delete action works only when foldmethod is 'manual'", vim.log.levels.ERROR)
+	local start_line = display.focus_node.scope["start"].line
+	local end_line = display.focus_node.scope["end"].line
+
+	if is_manual_foldmethod(display) == false then
 		return
 	end
 
@@ -259,16 +300,21 @@ function actions.fold_delete(display)
 	vim.api.nvim_set_current_win(display.for_win)
 	vim.api.nvim_win_set_cursor(
 		display.for_win,
-		{ display.focus_node.scope["start"].line, display.focus_node.scope["start"].character }
+		{ start_line, display.focus_node.scope["start"].character }
 	)
-	vim.api.nvim_command("normal! v")
 	vim.api.nvim_win_set_cursor(
 		display.for_win,
-		{ display.focus_node.scope["end"].line, display.focus_node.scope["end"].character - 1 }
+		{ end_line, display.focus_node.scope["end"].character - 1 }
 	)
 	pcall(vim.api.nvim_command, "normal! zd")
+	vim.api.nvim_win_set_cursor(display.for_win, { start_line, 0 })
+	clean_trailing_space()
+	vim.api.nvim_win_set_cursor(display.for_win, { end_line, 0 })
+	clean_trailing_space()
 	vim.api.nvim_set_current_win(display.mid.winid)
 	display.state.leaving_window_for_action = false
+
+	reinit_foldmethod()
 end
 
 function actions.comment(display)
