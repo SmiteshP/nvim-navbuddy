@@ -79,7 +79,7 @@ end
 function actions.children()
 	local callback = function(display)
 		if display.focus_node.children == nil then
-			actions.select(display)
+			actions.select().callback(display)
 			return
 		end
 
