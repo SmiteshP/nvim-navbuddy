@@ -62,44 +62,44 @@ local config = {
 	},
 	use_default_mappings = true,
 	mappings = {
-		["<esc>"] = actions.close,
-		["q"] = actions.close,
+		["<esc>"] = actions.close(),
+		["q"] = actions.close(),
 
-		["j"] = actions.next_sibling,
-		["k"] = actions.previous_sibling,
+		["j"] = actions.next_sibling(),
+		["k"] = actions.previous_sibling(),
 
-		["h"] = actions.parent,
-		["l"] = actions.children,
-		["0"] = actions.root,
+		["h"] = actions.parent(),
+		["l"] = actions.children(),
+		["0"] = actions.root(),
 
-		["v"] = actions.visual_name,
-		["V"] = actions.visual_scope,
+		["v"] = actions.visual_name(),
+		["V"] = actions.visual_scope(),
 
-		["y"] = actions.yank_name,
-		["Y"] = actions.yank_scope,
+		["y"] = actions.yank_name(),
+		["Y"] = actions.yank_scope(),
 
-		["i"] = actions.insert_name,
-		["I"] = actions.insert_scope,
+		["i"] = actions.insert_name(),
+		["I"] = actions.insert_scope(),
 
-		["a"] = actions.append_name,
-		["A"] = actions.append_scope,
+		["a"] = actions.append_name(),
+		["A"] = actions.append_scope(),
 
-		["r"] = actions.rename,
+		["r"] = actions.rename(),
 
-		["d"] = actions.delete,
+		["d"] = actions.delete(),
 
-		["f"] = actions.fold_create,
-		["F"] = actions.fold_delete,
+		["f"] = actions.fold_create(),
+		["F"] = actions.fold_delete(),
 
-		["c"] = actions.comment,
+		["c"] = actions.comment(),
 
-		["<enter>"] = actions.select,
-		["o"] = actions.select,
+		["<enter>"] = actions.select(),
+		["o"] = actions.select(),
 
-		["J"] = actions.move_down,
-		["K"] = actions.move_up,
+		["J"] = actions.move_down(),
+		["K"] = actions.move_up(),
 
-		["s"] = actions.toggle_preview,
+		["s"] = actions.toggle_preview(),
 
 		["t"] = actions.telescope({
 			layout_strategy = "horizontal",
@@ -110,6 +110,8 @@ local config = {
 				preview_width = 0.50
 			},
 		}),
+
+		["g?"] = actions.help(),
 	},
 	lsp = {
 		auto_attach = false,
