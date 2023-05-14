@@ -1,5 +1,12 @@
 local actions = {}
 
+local function fix_end_character_position(bufnr, name_range_or_scope)
+	if name_range_or_scope["end"].character == 0 and (name_range_or_scope["end"].line - name_range_or_scope["start"].line) > 0 then
+		name_range_or_scope["end"].line = name_range_or_scope["end"].line - 1
+		name_range_or_scope["end"].character = string.len(vim.api.nvim_buf_get_lines(bufnr, name_range_or_scope["end"].line - 1, name_range_or_scope["end"].line, false)[1])
+	end
+end
+
 function actions.close()
 	local callback = function(display)
 		display:close()
@@ -123,6 +130,8 @@ end
 function actions.select()
 	local callback = function(display)
 		display:close()
+		fix_end_character_position(display.for_buf, display.focus_node.name_range)
+		fix_end_character_position(display.for_buf, display.focus_node.scope)
 		-- to push location to jumplist:
 		-- move display to start_cursor, set mark ', then move to new location
 		vim.api.nvim_win_set_cursor(display.for_win, display.start_cursor)
@@ -163,6 +172,7 @@ end
 function actions.yank_name()
 	local callback = function(display)
 		display:close()
+		fix_end_character_position(display.for_buf, display.focus_node.name_range)
 		vim.api.nvim_win_set_cursor(
 			display.for_win,
 			{ display.focus_node.name_range["start"].line, display.focus_node.name_range["start"].character }
@@ -184,6 +194,7 @@ end
 function actions.yank_scope()
 	local callback = function(display)
 		display:close()
+		fix_end_character_position(display.for_buf, display.focus_node.scope)
 		vim.api.nvim_win_set_cursor(
 			display.for_win,
 			{ display.focus_node.scope["start"].line, display.focus_node.scope["start"].character }
@@ -205,6 +216,7 @@ end
 function actions.visual_name()
 	local callback = function(display)
 		display:close()
+		fix_end_character_position(display.for_buf, display.focus_node.name_range)
 		vim.api.nvim_win_set_cursor(
 			display.for_win,
 			{ display.focus_node.name_range["start"].line, display.focus_node.name_range["start"].character }
@@ -225,6 +237,7 @@ end
 function actions.visual_scope()
 	local callback = function(display)
 		display:close()
+		fix_end_character_position(display.for_buf, display.focus_node.scope)
 		vim.api.nvim_win_set_cursor(
 			display.for_win,
 			{ display.focus_node.scope["start"].line, display.focus_node.scope["start"].character }
@@ -245,6 +258,7 @@ end
 function actions.insert_name()
 	local callback = function(display)
 		display:close()
+		fix_end_character_position(display.for_buf, display.focus_node.name_range)
 		vim.api.nvim_win_set_cursor(
 			display.for_win,
 			{ display.focus_node.name_range["start"].line, display.focus_node.name_range["start"].character }
@@ -261,6 +275,7 @@ end
 function actions.insert_scope()
 	local callback = function(display)
 		display:close()
+		fix_end_character_position(display.for_buf, display.focus_node.scope)
 		vim.api.nvim_win_set_cursor(
 			display.for_win,
 			{ display.focus_node.scope["start"].line, display.focus_node.scope["start"].character }
@@ -277,6 +292,7 @@ end
 function actions.append_name()
 	local callback = function(display)
 		display:close()
+		fix_end_character_position(display.for_buf, display.focus_node.name_range)
 		vim.api.nvim_win_set_cursor(
 			display.for_win,
 			{ display.focus_node.name_range["end"].line, display.focus_node.name_range["end"].character - 1 }
@@ -293,6 +309,7 @@ end
 function actions.append_scope()
 	local callback = function(display)
 		display:close()
+		fix_end_character_position(display.for_buf, display.focus_node.scope)
 		if
 			string.len(
 				vim.api.nvim_buf_get_lines(
@@ -353,6 +370,7 @@ function actions.fold_create()
 			return
 		end
 
+		fix_end_character_position(display.for_buf, display.focus_node.scope)
 		display.state.leaving_window_for_action = true
 		vim.api.nvim_set_current_win(display.for_win)
 		vim.api.nvim_win_set_cursor(
@@ -382,6 +400,7 @@ function actions.fold_delete()
 			return
 		end
 
+		fix_end_character_position(display.for_buf, display.focus_node.scope)
 		display.state.leaving_window_for_action = true
 		vim.api.nvim_set_current_win(display.for_win)
 		vim.api.nvim_win_set_cursor(
@@ -412,6 +431,7 @@ function actions.comment()
 			return
 		end
 
+		fix_end_character_position(display.for_buf, display.focus_node.scope)
 		display.state.leaving_window_for_action = true
 		vim.api.nvim_set_current_win(display.for_win)
 		vim.api.nvim_buf_set_mark(
@@ -445,6 +465,9 @@ local function swap_nodes(for_buf, nodeA, nodeB)
 	--   |
 	--   v
 	-- nodeB
+
+	fix_end_character_position(for_buf, nodeA.scope)
+	fix_end_character_position(for_buf, nodeB.scope)
 
 	if nodeA.scope["end"].line >= nodeB.scope["start"].line and nodeA.parent == nodeB.parent then
 		vim.notify("Cannot swap!", vim.log.levels.ERROR)
