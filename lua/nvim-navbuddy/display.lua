@@ -90,7 +90,7 @@ function display:new(obj)
 	-- NUI elements
 	local left_popup = nui_popup({
 		focusable = false,
-		border = config.window.sections.left.border or ui.get_border_chars(config.window.border, "left"),
+		border = { style = config.window.sections.left.border } or ui.get_border_chars(config.window.border, "left"),
 		win_options = {
 			winhighlight = "Normal:NavbuddyNormalFloat,FloatBorder:NavbuddyFloatBorder",
 		},
@@ -101,7 +101,7 @@ function display:new(obj)
 
 	local mid_popup = nui_popup({
 		enter = true,
-		border = config.window.sections.mid.border or ui.get_border_chars(config.window.border, "mid"),
+		border = { style = config.window.sections.mid.border } or ui.get_border_chars(config.window.border, "mid"),
 		win_options = {
 			winhighlight = "Normal:NavbuddyNormalFloat,FloatBorder:NavbuddyFloatBorder",
 			scrolloff = config.window.scrolloff
