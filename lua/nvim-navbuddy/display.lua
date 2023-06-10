@@ -23,14 +23,21 @@ local function clear_buffer(buf)
 	end
 end
 
-local function fill_buffer(buf, node, config)
+local function fill_buffer(buf, node, config, show_hidden)
 	local cursor_pos = vim.api.nvim_win_get_cursor(buf.winid)
 	clear_buffer(buf)
 
 	local parent = node.parent
 
+	local node_list = {}
+	if show_hidden then
+		node_list = parent.children
+	else
+		node_list = parent.visible_children
+	end
+
 	local lines = {}
-	for _, child_node in ipairs(parent.children) do
+	for _, child_node in ipairs(node_list) do
 		local text = " " .. config.icons[child_node.kind] .. child_node.name
 		table.insert(lines, text)
 	end
@@ -39,11 +46,14 @@ local function fill_buffer(buf, node, config)
 	vim.api.nvim_buf_set_lines(buf.bufnr, 0, -1, false, lines)
 	vim.api.nvim_buf_set_option(buf.bufnr, "modifiable", false)
 
-	if cursor_pos[1] ~= node.index then
+	if show_hidden and cursor_pos[1] ~= node.index then
 		cursor_pos[1] = node.index
+	elseif not show_hidden and cursor_pos[1] ~= node.visible_index then
+		cursor_pos[1] = node.visible_index
+		print(node.visible_index)
 	end
 
-	for i, child_node in ipairs(parent.children) do
+	for i, child_node in ipairs(node_list) do
 		local hl_group = "Navbuddy" .. navic.adapt_lsp_num_to_str(child_node.kind)
 		vim.api.nvim_buf_add_highlight(
 			buf.bufnr,
@@ -53,10 +63,18 @@ local function fill_buffer(buf, node, config)
 			0,
 			-1
 		)
+
+		local has_children = nil
+		if show_hidden then
+			has_children = (child_node.children ~= nil)
+		else
+			has_children = (child_node.visible_children ~= nil)
+		end
+
 		if config.node_markers.enabled then
 			vim.api.nvim_buf_set_extmark(buf.bufnr, ns, i - 1, #lines[i], {
 				virt_text = { {
-					child_node.children ~= nil and config.node_markers.icons.branch
+					has_children and config.node_markers.icons.branch
 						or i == cursor_pos[1] and config.node_markers.icons.leaf_selected
 						or config.node_markers.icons.leaf,
 					i == cursor_pos[1] and { "NavbuddyCursorLine", hl_group } or hl_group,
@@ -67,6 +85,7 @@ local function fill_buffer(buf, node, config)
 		end
 	end
 
+	vim.pretty_print(cursor_pos)
 	vim.api.nvim_buf_add_highlight(buf.bufnr, ns, "NavbuddyCursorLine", cursor_pos[1] - 1, 0, -1)
 	vim.api.nvim_buf_set_extmark(buf.bufnr, ns, cursor_pos[1] - 1, #lines[cursor_pos[1]], {
 		end_row = cursor_pos[1],
@@ -164,7 +183,8 @@ function display:new(obj)
 		leaving_window_for_reorientation = false,
 		closed = false,
 		-- user_gui_cursor = nil,
-		source_buffer_scrolloff = nil
+		source_buffer_scrolloff = nil,
+		show_hidden = (config.lsp.hide == nil)
 	}
 
 	-- Set filetype
@@ -193,8 +213,16 @@ function display:new(obj)
 		buffer = obj.mid.bufnr,
 		callback = function()
 			local cursor_pos = vim.api.nvim_win_get_cursor(obj.mid.winid)
-			if obj.focus_node ~= obj.focus_node.parent.children[cursor_pos[1]] then
-				obj.focus_node = obj.focus_node.parent.children[cursor_pos[1]]
+
+			local node_list = {}
+			if obj.state.show_hidden then
+				node_list = obj.focus_node.parent.children
+			else
+				node_list = obj.focus_node.parent.visible_children
+			end
+
+			if obj.focus_node ~= node_list[cursor_pos[1]] then
+				obj.focus_node = node_list[cursor_pos[1]]
 				obj:redraw()
 			end
 
@@ -348,9 +376,9 @@ function display:hide_preview()
 	local node = self.focus_node
 	if node.children then
 		if node.memory then
-			fill_buffer(self.right, node.children[node.memory], self.config)
+			fill_buffer(self.right, node.children[node.memory], self.config, self.state.show_hidden)
 		else
-			fill_buffer(self.right, node.children[1], self.config)
+			fill_buffer(self.right, node.children[1], self.config, self.state.show_hidden)
 		end
 	else
 		clear_buffer(self.right)
@@ -363,7 +391,7 @@ end
 
 function display:redraw()
 	local node = self.focus_node
-	fill_buffer(self.mid, node, self.config)
+	fill_buffer(self.mid, node, self.config, self.state.show_hidden)
 
 	local preview_method = self.config.window.sections.right.preview
 
@@ -372,9 +400,9 @@ function display:redraw()
 	else
 		if node.children then
 			if node.memory then
-				fill_buffer(self.right, node.children[node.memory], self.config)
+				fill_buffer(self.right, node.children[node.memory], self.config, self.state.show_hidden)
 			else
-				fill_buffer(self.right, node.children[1], self.config)
+				fill_buffer(self.right, node.children[1], self.config, self.state.show_hidden)
 			end
 		else
 			if preview_method == "leaf" then
@@ -388,7 +416,7 @@ function display:redraw()
 	if node.parent.is_root then
 		clear_buffer(self.left)
 	else
-		fill_buffer(self.left, node.parent, self.config)
+		fill_buffer(self.left, node.parent, self.config, self.state.show_hidden)
 	end
 end
 

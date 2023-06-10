@@ -116,6 +116,7 @@ local config = {
 	lsp = {
 		auto_attach = false,
 		preference = nil,
+		hide = nil
 	},
 	source_buffer = {
 		follow_node = true,
@@ -232,7 +233,38 @@ local function request(for_buf, handler)
 	end
 end
 
+local function dfs_filter(node)
+	if node.children ~= nil then
+		for _, x in ipairs(node.children) do
+			dfs_filter(x)
+		end
+
+		node.visible_children = {}
+		for _, x in ipairs(node.children) do
+			if x.hidden == false then
+				table.insert(node.visible_children, x)
+			end
+		end
+
+		for i, x in ipairs(node.visible_children) do
+			x.visible_index = i
+		end
+	end
+
+	node.hidden = config.lsp.hide(node)
+end
+
 local function handler(bufnr, curr_node, lsp_name)
+
+	if config.lsp.hide ~= nil then
+		local root_node = curr_node
+		while root_node.is_root ~= true do
+			root_node = root_node.parent
+		end
+
+		dfs_filter(root_node)
+	end
+
 	if curr_node.is_root then
 		if curr_node.children then
 			local curr_line = vim.api.nvim_win_get_cursor(0)[1]

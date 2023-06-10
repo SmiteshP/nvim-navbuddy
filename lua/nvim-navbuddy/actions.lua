@@ -27,9 +27,17 @@ function actions.next_sibling()
 
 		for _ = 1, vim.v.count1 do
 			local next_node = display.focus_node.next
+
+			if not display.state.show_hidden then
+				while next_node ~= nil and next_node.hidden == true do
+					next_node = next_node.next
+				end
+			end
+
 			if next_node == nil then
 				break
 			end
+
 			display.focus_node = next_node
 		end
 
@@ -50,9 +58,20 @@ function actions.previous_sibling()
 
 		for _ = 1, vim.v.count1 do
 			local prev_node = display.focus_node.prev
+
+			if not display.state.show_hidden then
+				while prev_node.hidden == true do
+					prev_node = prev_node.prev
+					if prev_node == nil then
+						break
+					end
+				end
+			end
+
 			if prev_node == nil then
 				break
 			end
+
 			display.focus_node = prev_node
 		end
 
