@@ -364,6 +364,9 @@ function M.setup(user_config)
 		vim.api.nvim_create_autocmd("LspAttach", {
 			callback = function(args)
 				local bufnr = args.buf
+				if args.data == nil and args.data.client_id == nil then
+					return
+				end
 				local client = vim.lsp.get_client_by_id(args.data.client_id)
 				if not client.server_capabilities.documentSymbolProvider then
 					return
