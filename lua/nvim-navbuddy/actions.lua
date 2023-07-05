@@ -650,12 +650,21 @@ function actions.help()
 	local callback = function(display)
 		display:close()
 
+		local relative = display.config.window.relative
+		relative = type(relative) == "function" and relative(display.for_win) or relative
+
+		local position = display.config.window.position
+		position = type(position) == "function" and position(display.for_win) or position
+
+		local size = display.config.window.size
+		size = type(size) == "function" and size(display.for_win) or size
+
 		local nui_popup = require("nui.popup")
 
 		local help_popup = nui_popup({
-			relative = "editor",
-			position = display.config.window.position,
-			size = display.config.window.size,
+			relative = relative,
+			position = position,
+			size = size,
 			enter = true,
 			focusable = true,
 			border = display.config.window.border,
