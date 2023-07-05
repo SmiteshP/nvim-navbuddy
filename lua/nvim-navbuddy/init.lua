@@ -374,6 +374,21 @@ function M.setup(user_config)
 				M.attach(client, bufnr)
 			end,
 		})
+
+		--- Attach to already active clients.
+		local all_clients = vim.lsp.get_active_clients()
+
+		local supported_clients = vim.tbl_filter(function(client)
+			return client.server_capabilities.documentSymbolProvider
+		end, all_clients)
+
+		for _, client in ipairs(supported_clients) do
+			local buffers_of_client = vim.lsp.get_buffers_by_client_id(client.id)
+
+			for _, buffer_number in ipairs(buffers_of_client) do
+				M.attach(client, buffer_number)
+			end
+		end
 	end
 end
 
