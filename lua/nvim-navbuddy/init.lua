@@ -101,6 +101,9 @@ local config = {
 
 		["s"] = actions.toggle_preview(),
 
+		["<C-v>"] = actions.vsplit(),
+		["<C-s>"] = actions.hsplit(),
+
 		["t"] = actions.telescope({
 			layout_strategy = "horizontal",
 			layout_config = {

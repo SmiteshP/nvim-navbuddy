@@ -212,6 +212,11 @@ Defaults >lua
 			["J"] = actions.move_down(),        -- Move focused node down
 			["K"] = actions.move_up(),          -- Move focused node up
 
+			["s"] = actions.toggle_preview(),   -- Show preview of current node
+
+			["<C-v>"] = actions.vsplit(),       -- Open selected node in a vertical split
+			["<C-s>"] = actions.hsplit(),       -- Open selected node in a horizontal split
+
 			["t"] = actions.telescope({         -- Fuzzy finder at current level.
 				layout_config = {			    -- All options that can be
 					height = 0.60,              -- passed to telescope.nvim's
@@ -308,6 +313,15 @@ Actions                                                         *navbuddy-action
 *actions.move_up* ()
 	Move currently focued node up. Copies entire lines and works only in case
 	there are no overlapping lines between current node and previous node.
+
+*actions.vsplit* ()
+	Opens vertical split with currently selected node.
+	Will not remember top line like *winsaveview()* does.
+	NOTE: Direction of split is controlled by *'splitright'*
+
+*actions.hsplit* ()
+	Acts akin to vsplit, but splits horizontally.
+	NOTE: Direction of split is controlled by *'splitbelow'*
 
 *actions.telescope* (opts)
 	Open Fuzzy finder with telescope to search sibling nodes on current level.
