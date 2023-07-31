@@ -566,6 +566,36 @@ function actions.toggle_preview()
 	}
 end
 
+function actions.vsplit()
+	local callback = function(display)
+		actions.close().callback(display)
+		vim.api.nvim_command("vsplit")
+		display.for_win = vim.api.nvim_get_current_win()
+		actions.select().callback(display)
+		vim.api.nvim_command("normal! zv")
+	end
+
+	return {
+		callback = callback,
+		description = "Open selected node in a vertical split"
+	}
+end
+
+function actions.hsplit()
+	local callback = function(display)
+		actions.close().callback(display)
+		vim.api.nvim_command("split")
+		display.for_win = vim.api.nvim_get_current_win()
+		actions.select().callback(display)
+		vim.api.nvim_command("normal! zv")
+	end
+
+	return {
+		callback = callback,
+		description = "Open selected node in a horizontal split"
+	}
+end
+
 function actions.telescope(opts)
 	local callback = function(display)
 		local status_ok, _ = pcall(require, "telescope")
