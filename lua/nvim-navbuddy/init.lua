@@ -303,6 +303,21 @@ function M.attach(client, bufnr)
 		group = navbuddy_augroup,
 		buffer = bufnr,
 	})
+	vim.api.nvim_create_autocmd("LspDetach", {
+		callback = function()
+			for i, c in ipairs(navbuddy_attached_clients[bufnr]) do
+				if c.id == client.id then
+					table.remove(navbuddy_attached_clients[bufnr], i)
+					break
+				end
+			end
+			if #navbuddy_attached_clients[bufnr] == 0 then
+				navbuddy_attached_clients[bufnr] = nil
+			end
+		end,
+		group = navbuddy_augroup,
+		buffer = bufnr,
+	})
 
 	vim.api.nvim_buf_create_user_command(bufnr, "Navbuddy", function()
 		M.open(bufnr)
