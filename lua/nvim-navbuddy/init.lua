@@ -288,6 +288,21 @@ function M.attach(client, bufnr)
 	if navbuddy_attached_clients[bufnr] == nil then
 		navbuddy_attached_clients[bufnr] = {}
 	end
+
+	-- Check if already attached
+	for _, c in ipairs(navbuddy_attached_clients[bufnr]) do
+		if c.id == client.id then
+			return
+		end
+	end
+
+	-- Check for stopped lsp servers
+	for i, c in ipairs(navbuddy_attached_clients[bufnr]) do
+		if c.is_stopped then
+			table.remove(navbuddy_attached_clients[bufnr], i)
+		end
+	end
+
 	table.insert(navbuddy_attached_clients[bufnr], client)
 
 	local navbuddy_augroup = vim.api.nvim_create_augroup("navbuddy", { clear = false })
