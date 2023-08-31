@@ -327,9 +327,9 @@ function M.attach(client, bufnr)
 						break
 					end
 				end
-			end
-			if #navbuddy_attached_clients[bufnr] == 0 then
-				navbuddy_attached_clients[bufnr] = nil
+				if #navbuddy_attached_clients[bufnr] == 0 then
+					navbuddy_attached_clients[bufnr] = nil
+				end
 			end
 		end,
 		group = navbuddy_augroup,
