@@ -110,7 +110,7 @@ local config = {
 				height = 0.60,
 				width = 0.60,
 				prompt_position = "top",
-				preview_width = 0.50
+				preview_width = 0.50,
 			},
 		}),
 
@@ -124,7 +124,7 @@ local config = {
 		follow_node = true,
 		highlight = true,
 		reorient = "smart",
-		scrolloff = nil
+		scrolloff = nil,
 	},
 }
 
@@ -320,14 +320,16 @@ function M.attach(client, bufnr)
 	})
 	vim.api.nvim_create_autocmd("LspDetach", {
 		callback = function()
-			for i, c in ipairs(navbuddy_attached_clients[bufnr]) do
-				if c.id == client.id then
-					table.remove(navbuddy_attached_clients[bufnr], i)
-					break
+			if navbuddy_attached_clients[bufnr] ~= nil then
+				for i, c in ipairs(navbuddy_attached_clients[bufnr]) do
+					if c.id == client.id then
+						table.remove(navbuddy_attached_clients[bufnr], i)
+						break
+					end
 				end
-			end
-			if #navbuddy_attached_clients[bufnr] == 0 then
-				navbuddy_attached_clients[bufnr] = nil
+				if #navbuddy_attached_clients[bufnr] == 0 then
+					navbuddy_attached_clients[bufnr] = nil
+				end
 			end
 		end,
 		group = navbuddy_augroup,
