@@ -4,14 +4,14 @@ A simple popup display that provides breadcrumbs like navigation feature but
 in keyboard centric manner inspired by ranger file manager.
 
 Requires :
-*nvim-lspconfig* `https://github.com/neovim/nvim-lspconfig`
-*nvim-navic* `https://github.com/SmiteshP/nvim-navic`
-*nui.nvim* `https://github.com/MunifTanjim/nui.nvim`
-*Neovim* 0.8 or above
+- nvim-lspconfig: `https://github.com/neovim/nvim-lspconfig`
+- nvim-navic: `https://github.com/SmiteshP/nvim-navic`
+- nui.nvim: `https://github.com/MunifTanjim/nui.nvim`
+- Neovim: 0.8 or above
 
 Optional requirements :
-*Comment.nvim* `https://github.com/numToStr/Comment.nvim`
-*telescope.nvim* `https://github.com/nvim-telescope/telescope.nvim`
+- Comment.nvim: `https://github.com/numToStr/Comment.nvim`
+- telescope.nvim: `https://github.com/nvim-telescope/telescope.nvim`
 
 =============================================================================
 CONTENTS                                                     *navbuddy-components*
@@ -27,15 +27,15 @@ API                                                                 *navbuddy-ap
 
 |nvim-navbuddy| provides the following functions for the user.
 
-*navbuddy.setup* (opts)
-	Configure |nvim-navbuddy|'s options. See more *navbuddy-customise*.
+navbuddy.setup (opts)
+	Configure |nvim-navbuddy|'s options. See more |navbuddy-customise|.
 
-*navbuddy.attach* (client, bufnr)
+navbuddy.attach (client, bufnr)
 	Used to attach |nvim-navbuddy| to lsp server. Pass this function as
 	on_attach while setting up your desired lsp server. Manual attachment can
 	be skiped if you have enabled auto_attach option.
 
-*navbuddy.open* (bufnr)
+navbuddy.open (bufnr)
 	Opens the Navbuddy window.
 
 =============================================================================
@@ -246,84 +246,84 @@ Actions                                                         *navbuddy-action
 
 |nvim-navbuddy| provides the following actions for the user.
 
-*actions.close* ()
+actions.close ()
 	Close the Navbuddy window and return cursor to original location.
 
-*actions.next_sibling* ()
+actions.next_sibling ()
 	Move to next_sibling, below current node, in Navbuddy window.
 
-*actions.previous_sibling* ()
+actions.previous_sibling ()
 	Move to previous_sibling, above current node, in Navbuddy window.
 
-*actions.parent* ()
+actions.parent ()
 	Move to parent of current, left of current node, in Navbuddy window.
 
-*actions.children* ()
+actions.children ()
 	Move to children of current, right of current node, in Navbuddy window.
 
-*actions.root* ()
+actions.root ()
 	Move to root node, the first node left of current node, in Navbuddy window.
 
-*actions.select* ()
+actions.select ()
 	Goto currently focus node.
 
-*actions.visual_name* ()
+actions.visual_name ()
 	Visual select the name of current node.
 
-*actions.visual_scope* ()
+actions.visual_scope ()
 	Visual select the scope of current node.
 
-*actions.yank_name* ()
+actions.yank_name ()
 	Yank the name of current node.
 
-*actions.yank_scope* ()
+actions.yank_scope ()
 	Yank the scope of current node.
 
-*actions.insert_name* ()
+actions.insert_name ()
 	Start insert at begin of name.
 
-*actions.insert_scope* ()
+actions.insert_scope ()
 	Start insert at begin of scope.
 
-*actions.append_name* ()
+actions.append_name ()
 	Start insert at end of name.
 
-*actions.append_scope* ()
+actions.append_scope ()
 	Start insert at end of scope.
 
-*actions.rename* ()
+actions.rename ()
 	Trigger lsp rename for current node.
 
-*actions.delete* ()
+actions.delete ()
 	Delete currently focused scope.
 
-*actions.fold_create* ()
+actions.fold_create ()
 	Create fold for current scope. Requires fold methos to be "manual".
 
-*actions.fold_delete* ()
+actions.fold_delete ()
 	Delete fold for current scope. Requires fold methos to be "manual".
 
-*actions.comment* ()
+actions.comment ()
 	Comment selected scope. Require Comment.nvim plugin to be installed.
 
-*actions.move_down* ()
+actions.move_down ()
 	Move currently focued node down. Copies entire lines and works only in case
 	there are no overlapping lines between current node and next node.
 
-*actions.move_up* ()
+actions.move_up ()
 	Move currently focued node up. Copies entire lines and works only in case
 	there are no overlapping lines between current node and previous node.
 
-*actions.vsplit* ()
+actions.vsplit ()
 	Opens vertical split with currently selected node.
-	Will not remember top line like *winsaveview()* does.
-	NOTE: Direction of split is controlled by *'splitright'*
+	Will not remember top line like |winsaveview()| does.
+	NOTE: Direction of split is controlled by 'splitright'
 
-*actions.hsplit* ()
+actions.hsplit ()
 	Acts akin to vsplit, but splits horizontally.
-	NOTE: Direction of split is controlled by *'splitbelow'*
+	NOTE: Direction of split is controlled by 'splitbelow'
 
-*actions.telescope* (opts)
+actions.telescope (opts)
 	Open Fuzzy finder with telescope to search sibling nodes on current level.
 	Can be customized during setup by passing opts table, all configuration
 	passed to telescope.nvim's default option can be passed here.
