@@ -111,6 +111,7 @@ navbuddy.setup {
         size = "60%",       -- Or table format example: { height = "40%", width = "100%"}
         position = "50%",   -- Or table format example: { row = "100%", col = "0%"}
         scrolloff = nil,    -- scrolloff value within navbuddy window
+		winblend = nil,     -- winblend value [0-100 or nil] (transparency)
         sections = {
             left = {
                 size = "20%",
