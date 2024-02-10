@@ -234,7 +234,7 @@ navbuddy.setup {
         reorient = "smart",    -- "smart", "top", "mid" or "none"
         scrolloff = nil        -- scrolloff value when navbuddy is open
     },
-	custom_hl_group = nil,     -- "Visual" or any other highlight group 
+	custom_hl_group = nil,     -- "Visual" or any other hl group to use instead of inverted colors
 }
 ```
 
