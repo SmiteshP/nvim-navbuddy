@@ -79,7 +79,7 @@ end
 local display = {}
 
 function display:new(obj)
-	ui.highlight_setup()
+	ui.highlight_setup(obj.config)
 
 	-- Object
 	setmetatable(obj, self)
