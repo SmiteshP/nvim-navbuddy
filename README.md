@@ -26,6 +26,7 @@ use {
         "SmiteshP/nvim-navic",
         "MunifTanjim/nui.nvim",
         "numToStr/Comment.nvim",        -- Optional
+        "echasnovski/mini.comment",     -- Optional
         "nvim-telescope/telescope.nvim" -- Optional
     }
 }
@@ -38,6 +39,7 @@ Plug "neovim/nvim-lspconfig"
 Plug "SmiteshP/nvim-navic"
 Plug "MunifTanjim/nui.nvim"
 Plug "numToStr/Comment.nvim",        " Optional
+Plug "echasnovski/mini.comment",     " Optional
 Plug "nvim-telescope/telescope.nvim" " Optional
 Plug "SmiteshP/nvim-navbuddy"
 ```

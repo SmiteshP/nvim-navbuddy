@@ -11,6 +11,7 @@ Requires :
 
 Optional requirements :
 - Comment.nvim: `https://github.com/numToStr/Comment.nvim`
+- mini.comment: `https://github.com/echasnovski/mini.nvim`
 - telescope.nvim: `https://github.com/nvim-telescope/telescope.nvim`
 
 =============================================================================
@@ -304,7 +305,7 @@ actions.fold_delete ()
 	Delete fold for current scope. Requires fold methos to be "manual".
 
 actions.comment ()
-	Comment selected scope. Require Comment.nvim plugin to be installed.
+	Comment selected scope. Require Comment.nvim or mini.comment plugin to be installed.
 
 actions.move_down ()
 	Move currently focued node down. Copies entire lines and works only in case
