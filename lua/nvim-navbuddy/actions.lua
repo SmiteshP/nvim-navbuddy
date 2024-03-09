@@ -425,32 +425,47 @@ end
 
 function actions.comment()
 	local callback = function(display)
-		local status_ok, comment = pcall(require, "Comment.api")
-		if not status_ok then
-			vim.notify("Comment.nvim not found", vim.log.levels.ERROR)
+		local status_ok_comment, comment = pcall(require, "Comment.api")
+		if status_ok_comment then
+			fix_end_character_position(display.for_buf, display.focus_node.scope)
+			display.state.leaving_window_for_action = true
+			vim.api.nvim_set_current_win(display.for_win)
+			vim.api.nvim_buf_set_mark(
+				display.for_buf,
+				"<",
+				display.focus_node.scope["start"].line,
+				display.focus_node.scope["start"].character,
+				{}
+			)
+			vim.api.nvim_buf_set_mark(
+				display.for_buf,
+				">",
+				display.focus_node.scope["end"].line,
+				display.focus_node.scope["end"].character,
+				{}
+			)
+			comment.locked("toggle.linewise")("v")
+			vim.api.nvim_set_current_win(display.mid.winid)
+			display.state.leaving_window_for_action = false
 			return
 		end
 
-		fix_end_character_position(display.for_buf, display.focus_node.scope)
-		display.state.leaving_window_for_action = true
-		vim.api.nvim_set_current_win(display.for_win)
-		vim.api.nvim_buf_set_mark(
-			display.for_buf,
-			"<",
-			display.focus_node.scope["start"].line,
-			display.focus_node.scope["start"].character,
-			{}
-		)
-		vim.api.nvim_buf_set_mark(
-			display.for_buf,
-			">",
-			display.focus_node.scope["end"].line,
-			display.focus_node.scope["end"].character,
-			{}
-		)
-		comment.locked("toggle.linewise")("v")
-		vim.api.nvim_set_current_win(display.mid.winid)
-		display.state.leaving_window_for_action = false
+		local status_ok_mini, mini_comment = pcall(require, "mini.comment")
+		if status_ok_mini then
+			local start_line = display.focus_node.scope["start"].line
+			local end_line = display.focus_node.scope["end"].line
+
+			display.state.leaving_window_for_action = true
+			vim.api.nvim_set_current_win(display.for_win)
+
+			mini_comment.toggle_lines(start_line, end_line, {})
+
+			vim.api.nvim_set_current_win(display.mid.winid)
+			display.state.leaving_window_for_action = false
+			return
+		end
+
+		vim.notify("Neither Comment.nvim nor mini.comment found", vim.log.levels.ERROR)
 	end
 
 	return {
