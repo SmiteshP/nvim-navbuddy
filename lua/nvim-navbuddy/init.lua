@@ -8,6 +8,7 @@ local actions = require("nvim-navbuddy.actions")
 local config = {
 	window = {
 		border = "single",
+		relative = "editor",
 		size = "60%",
 		position = "50%",
 		scrolloff = nil,

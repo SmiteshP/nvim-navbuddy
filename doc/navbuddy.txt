@@ -64,7 +64,7 @@ Use |navbuddy.setup| to override any of the default options
 		have nerd-fonts.
 
 	window: table
-		Set options related to window's "border", "size", "position".
+		Set options related to window's "border", "relative", "size", "position".
 
 	node_markers: table
 		Indicate whether a node is a leaf or branch node. Default icons assume
@@ -112,8 +112,16 @@ Defaults >lua
 			border = "single",  -- "rounded", "double", "solid", "none"
 								-- or an array with eight chars building up the border in a clockwise fashion
 								-- starting with the top-left corner. eg: { "╔", "═" ,"╗", "║", "╝", "═", "╚", "║" }.
+
+			relative = "editor" -- "editor", "cursor", "win", "buf"
+								-- or a function returning a relative value or table (current window as parameter)
+
 			size = "60%",       -- Or table format example: { height = "40%", width = "100%"}
+								-- or a function returning a size value or table (current window as parameter)
+
 			position = "50%",   -- Or table format example: { row = "100%", col = "0%"}
+								-- or a function returning a position value or table (current window as parameter)
+
 			scrolloff = nil,    -- scrolloff value within navbuddy window
 			sections = {
 				left = {
