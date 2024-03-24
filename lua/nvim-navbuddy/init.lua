@@ -126,6 +126,7 @@ local config = {
 		reorient = "smart",
 		scrolloff = nil,
 	},
+	custom_hl_group = nil,
 }
 
 setmetatable(config.icons, {
@@ -388,6 +389,10 @@ function M.setup(user_config)
 
 		if user_config.source_buffer ~= nil then
 			config.source_buffer = vim.tbl_deep_extend("keep", user_config.source_buffer, config.source_buffer)
+		end
+
+		if user_config.custom_hl_group ~= nil then
+			config.custom_hl_group = user_config.custom_hl_group
 		end
 	end
 

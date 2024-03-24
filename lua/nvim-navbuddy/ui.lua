@@ -111,7 +111,7 @@ function ui.get_border_chars(style, section)
 	return border_chars_map[section]
 end
 
-function ui.highlight_setup()
+function ui.highlight_setup(config)
 	for lsp_num = 1, 26 do
 		local navbuddy_ok, _ =
 			pcall(vim.api.nvim_get_hl_by_name, "Navbuddy" .. navic.adapt_lsp_num_to_str(lsp_num), false)
@@ -130,21 +130,38 @@ function ui.highlight_setup()
 			pcall(vim.api.nvim_get_hl_by_name, "Navbuddy" .. navic.adapt_lsp_num_to_str(lsp_num), true)
 		if ok then
 			navbuddy_hl = navbuddy_hl["foreground"]
-			vim.api.nvim_set_hl(0, "NavbuddyCursorLine" .. navic.adapt_lsp_num_to_str(lsp_num), { bg = navbuddy_hl })
+
+			local highlight
+			if config.custom_hl_group ~= nil then
+				highlight = { link = config.custom_hl_group }
+			else
+				highlight = { bg = navbuddy_hl  }
+			end
+			vim.api.nvim_set_hl(0, "NavbuddyCursorLine" .. navic.adapt_lsp_num_to_str(lsp_num), highlight)
 		else
 			local _, normal_hl = pcall(vim.api.nvim_get_hl_by_name, "Normal", true)
 			normal_hl = normal_hl["foreground"]
 			vim.api.nvim_set_hl(0, "Navbuddy" .. navic.adapt_lsp_num_to_str(lsp_num), { fg = normal_hl })
-			vim.api.nvim_set_hl(0, "NavbuddyCursorLine" .. navic.adapt_lsp_num_to_str(lsp_num), { bg = normal_hl })
+
+			local highlight
+			if config.custom_hl_group ~= nil then
+				highlight = { link = config.custom_hl_group }
+			else
+				highlight = { bg = normal_hl  }
+			end
+			vim.api.nvim_set_hl(0, "NavbuddyCursorLine" .. navic.adapt_lsp_num_to_str(lsp_num), highlight)
 		end
 	end
 
 	local ok, _ = pcall(vim.api.nvim_get_hl_by_name, "NavbuddyCursorLine", false)
 	if not ok then
-		vim.api.nvim_set_hl(0, "NavbuddyCursorLine", {
-			reverse = true,
-			bold = true,
-		})
+		local highlight
+		if config.custom_hl_group ~= nil then
+			highlight = { link = config.custom_hl_group }
+		else
+			highlight = { reverse = true, bold = true }
+		end
+		vim.api.nvim_set_hl(0, "NavbuddyCursorLine", highlight)
 	end
 
 	ok, _ = pcall(vim.api.nvim_get_hl_by_name, "NavbuddyCursor", false)
