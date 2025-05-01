@@ -93,6 +93,7 @@ function display:new(obj)
 		border = config.window.sections.left.border or ui.get_border_chars(config.window.border, "left"),
 		win_options = {
 			winhighlight = "Normal:NavbuddyNormalFloat,FloatBorder:NavbuddyFloatBorder",
+            number = config.window.sections.left.number or false
 		},
 		buf_options = {
 			modifiable = false,
@@ -104,7 +105,8 @@ function display:new(obj)
 		border = config.window.sections.mid.border or ui.get_border_chars(config.window.border, "mid"),
 		win_options = {
 			winhighlight = "Normal:NavbuddyNormalFloat,FloatBorder:NavbuddyFloatBorder",
-			scrolloff = config.window.scrolloff
+			scrolloff = config.window.scrolloff,
+            number = config.window.sections.mid.number or false
 		},
 		buf_options = {
 			modifiable = false,
@@ -136,6 +138,7 @@ function display:new(obj)
 		win_options = {
 			winhighlight = "Normal:NavbuddyNormalFloat,FloatBorder:NavbuddyFloatBorder",
 			scrolloff = 0,
+            number = config.window.sections.right.number or false
 		},
 		buf_options = {
 			modifiable = false,
@@ -339,6 +342,7 @@ function display:show_preview()
 	vim.api.nvim_win_set_option(self.right.winid, "signcolumn", "no")
 	vim.api.nvim_win_set_option(self.right.winid, "foldlevel", 100)
 	vim.api.nvim_win_set_option(self.right.winid, "wrap", false)
+	vim.api.nvim_win_set_option(self.right.winid, "number", self.config.window.sections.right.number or false)
 
 	self:reorient(self.right.winid, "smart")
 end
