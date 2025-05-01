@@ -142,11 +142,20 @@ function display:new(obj)
 		},
 	})
 
+	local relative = config.window.relative
+	relative = type(relative) == "function" and relative(obj.for_win) or relative
+
+	local position = config.window.position
+	position = type(position) == "function" and position(obj.for_win) or position
+
+	local size = config.window.size
+	size = type(size) == "function" and size(obj.for_win) or size
+
 	local layout = nui_layout(
 		{
-			relative = "editor",
-			position = config.window.position,
-			size = config.window.size,
+			relative = relative,
+			position = position,
+			size = size,
 		},
 		nui_layout.Box({
 			nui_layout.Box(left_popup, { size = config.window.sections.left.size }),
