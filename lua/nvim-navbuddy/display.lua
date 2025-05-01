@@ -167,6 +167,9 @@ function display:new(obj)
 		source_buffer_scrolloff = nil
 	}
 
+	-- Set name
+	vim.api.nvim_buf_set_name(obj.mid.bufnr, "Navbuddy")
+
 	-- Set filetype
 	vim.api.nvim_buf_set_option(obj.mid.bufnr, "filetype", "Navbuddy")
 
