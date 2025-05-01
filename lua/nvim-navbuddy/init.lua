@@ -416,7 +416,7 @@ function M.setup(user_config)
 		})
 
 		--- Attach to already active clients.
-		local all_clients = vim.lsp.get_clients()
+		local all_clients = vim.lsp.get_active_clients()
 
 		local supported_clients = vim.tbl_filter(function(client)
 			return client.server_capabilities.documentSymbolProvider
