@@ -135,19 +135,21 @@ function ui.highlight_setup(config)
 			if config.custom_hl_group ~= nil then
 				highlight = { link = config.custom_hl_group }
 			else
-				highlight = { bg = navbuddy_hl  }
+				highlight = { bg = navbuddy_hl }
 			end
 			vim.api.nvim_set_hl(0, "NavbuddyCursorLine" .. navic.adapt_lsp_num_to_str(lsp_num), highlight)
 		else
-			local _, normal_hl = pcall(vim.api.nvim_get_hl_by_name, "Normal", true)
-			normal_hl = normal_hl["foreground"]
-			vim.api.nvim_set_hl(0, "Navbuddy" .. navic.adapt_lsp_num_to_str(lsp_num), { fg = normal_hl })
+			vim.api.nvim_set_hl(
+				0,
+				"Navbuddy" .. navic.adapt_lsp_num_to_str(lsp_num),
+				{ link = "@lsp.type." .. navic.adapt_lsp_num_to_str(lsp_num) }
+			)
 
 			local highlight
 			if config.custom_hl_group ~= nil then
 				highlight = { link = config.custom_hl_group }
 			else
-				highlight = { bg = normal_hl  }
+				highlight = { bg = normal_hl }
 			end
 			vim.api.nvim_set_hl(0, "NavbuddyCursorLine" .. navic.adapt_lsp_num_to_str(lsp_num), highlight)
 		end
