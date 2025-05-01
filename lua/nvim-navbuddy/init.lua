@@ -336,10 +336,6 @@ function M.attach(client, bufnr)
 		group = navbuddy_augroup,
 		buffer = bufnr,
 	})
-
-	vim.api.nvim_buf_create_user_command(bufnr, "Navbuddy", function()
-		M.open(bufnr)
-	end, {})
 end
 
 function M.setup(user_config)
@@ -430,6 +426,10 @@ function M.setup(user_config)
 			end
 		end
 	end
+
+	vim.api.nvim_create_user_command("Navbuddy", function()
+		M.open()
+	end, {})
 end
 
 return M
