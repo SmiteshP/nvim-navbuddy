@@ -174,7 +174,15 @@ function ui.highlight_setup(config)
 
 	ok, _ = pcall(vim.api.nvim_get_hl_by_name, "NavbuddyName", false)
 	if not ok then
-		vim.api.nvim_set_hl(0, "NavbuddyName", { link = "IncSearch" })
+		local ok_normal, normal_hl = pcall(vim.api.nvim_get_hl_by_name, "Normal", true)
+		local normal_bg = ok_normal and normal_hl.background
+
+		local ok_inc, inc_hl = pcall(vim.api.nvim_get_hl_by_name, "IncSearch", true)
+		if ok_inc and inc_hl.background and normal_bg then
+			vim.api.nvim_set_hl(0, "NavbuddyName", { fg = normal_bg, bg = inc_hl.background })
+		else
+			vim.api.nvim_set_hl(0, "NavbuddyName", { link = "IncSearch" })
+		end
 	end
 
 	ok, _ = pcall(vim.api.nvim_get_hl_by_name, "NavbuddyScope", false)

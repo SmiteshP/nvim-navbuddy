@@ -263,37 +263,17 @@ function display:focus_range()
 	if self.config.source_buffer.highlight then
 		for _, v in ipairs(ranges) do
 			local highlight, range = unpack(v)
-
-			if range["start"].line == range["end"].line then
-				vim.api.nvim_buf_add_highlight(
-					self.for_buf,
-					ns,
-					highlight,
-					range["start"].line - 1,
-					range["start"].character,
-					range["end"].character
-				)
-			else
-				vim.api.nvim_buf_add_highlight(
-					self.for_buf,
-					ns,
-					highlight,
-					range["start"].line - 1,
-					range["start"].character,
-					-1
-				)
-				vim.api.nvim_buf_add_highlight(
-					self.for_buf,
-					ns,
-					highlight,
-					range["end"].line - 1,
-					0,
-					range["end"].character
-				)
-				for i = range["start"].line, range["end"].line - 2, 1 do
-					vim.api.nvim_buf_add_highlight(self.for_buf, ns, highlight, i, 0, -1)
-				end
+			local priority = 100
+			if highlight == "NavbuddyName" then
+				priority = 201
 			end
+
+			vim.api.nvim_buf_set_extmark(self.for_buf, ns, range["start"].line - 1, range["start"].character, {
+				end_row = range["end"].line - 1,
+				end_col = range["end"].character,
+				hl_group = highlight,
+				priority = priority,
+			})
 		end
 	end
 
@@ -358,7 +338,7 @@ function display:hide_preview()
 end
 
 function display:clear_highlights()
-	vim.api.nvim_buf_clear_highlight(self.for_buf, ns, 0, -1)
+	vim.api.nvim_buf_clear_namespace(self.for_buf, ns, 0, -1)
 end
 
 function display:redraw()
